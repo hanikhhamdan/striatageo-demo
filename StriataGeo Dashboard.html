@@ -165,6 +165,25 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .subtab{padding:10px 14px;font-size:12px;color:var(--text-secondary);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;letter-spacing:.02em}
 .subtab:hover{color:var(--text-primary)}
 .subtab.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:500}
+.subtab.disabled{color:var(--text-tertiary);cursor:not-allowed;opacity:.55}
+.subtab.disabled:hover{color:var(--text-tertiary)}
+.panel-raised{background:var(--surface-raised);padding:14px;border-radius:6px}
+.tline{position:relative;padding-left:32px}
+.tline::before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:2px;background:var(--border)}
+.tline > div{position:relative;margin-bottom:18px}
+.tline > div:last-child{margin-bottom:0}
+.tline-dot{position:absolute;left:-32px;top:2px;width:18px;height:18px;border-radius:50%;background:var(--teal);border:2px solid var(--canvas)}
+.tline-dot.warn{background:var(--warning)}
+.tline-dot.crit{background:var(--critical)}
+.tline-date{font-size:11px;color:var(--text-tertiary);font-family:var(--mono);margin-bottom:2px}
+.tline-title{font-size:13px;font-weight:500}
+.tline-body{font-size:12px;color:var(--text-secondary);line-height:1.5;margin-top:4px}
+.kv{display:grid;grid-template-columns:120px 1fr;row-gap:8px;column-gap:14px;font-size:12px}
+.kv .k{color:var(--text-tertiary);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.kv .v{color:var(--text-secondary);line-height:1.6}
+.kv .v strong{color:var(--text-primary);font-weight:500}
+.evidence-mini{font-size:11px;color:var(--text-tertiary);font-family:var(--mono);margin-top:12px}
+.evidence-mini a{color:var(--teal);text-decoration:none;border-bottom:1px dashed var(--teal-dim)}
 
 /* LIST ROWS */
 .lrow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:4px;cursor:pointer;border:1px solid transparent;border-left:2px solid transparent}
@@ -625,9 +644,9 @@ document.addEventListener('DOMContentLoaded', function(){
         <div class="subtab" data-st="history">History</div>
         <div class="subtab" data-st="dec">Decision-Making</div>
         <div class="subtab" data-st="for">Foreign Influence</div>
-        <div class="subtab" data-st="net">Network</div>
-        <div class="subtab" data-st="mile">Milestones</div>
-        <div class="subtab" data-st="perf">Performance</div>
+        <div class="subtab disabled" title="Coming in production" data-st="net">Network</div>
+        <div class="subtab disabled" title="Coming in production" data-st="mile">Milestones</div>
+        <div class="subtab disabled" title="Coming in production" data-st="perf">Performance</div>
       </div>
 
       <div id="inst-st-current">
@@ -688,6 +707,152 @@ document.addEventListener('DOMContentLoaded', function(){
           </div>
         </div>
       </div>
+
+      <!-- ============ CoM · HISTORY ============ -->
+      <div id="inst-st-history" style="display:none">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Salam government — formation timeline</div>
+            <span class="info" data-tip="<strong>Formation timeline.</strong> Five-step path from presidential election to confidence vote. Sourced from Lebanese Government Gazette, Reuters, L'Orient Today, AFP."></span>
+            <span class="pill pill-pending" style="margin-left:auto">⏳ Pending review</span>
+          </div>
+          <div class="tline" style="margin-top:8px">
+            <div>
+              <div class="tline-dot"></div>
+              <div class="tline-date">9 Jan 2025</div>
+              <div class="tline-title">Joseph Aoun elected President</div>
+              <div class="tline-body">Second-round vote, 71 of 128 MPs after 13 prior failed sessions. Endorsed by USA, France, Saudi Arabia. First president since Michel Aoun's term ended Oct 2022.</div>
+            </div>
+            <div>
+              <div class="tline-dot"></div>
+              <div class="tline-date">13 Jan 2025</div>
+              <div class="tline-title">Salam designated PM</div>
+              <div class="tline-body">President Aoun designates Nawaf Salam (then ICJ President) after binding parliamentary consultations. 84 of 128 MPs name him; Hezbollah and Amal blocs decline to nominate.</div>
+            </div>
+            <div>
+              <div class="tline-dot warn"></div>
+              <div class="tline-date">14 Jan – 7 Feb 2025</div>
+              <div class="tline-title">Cabinet-formation negotiations</div>
+              <div class="tline-body">Hezbollah/Amal initially refuse to back Salam, demand veto-portfolio guarantees. Maarad bloc + Saudi external pressure (BdL liquidity assurances, Lebanon-GCC visa thaw) reframe the negotiation. Shia Duo concedes after securing Health, Labour, Finance, Public Works.</div>
+            </div>
+            <div>
+              <div class="tline-dot"></div>
+              <div class="tline-date">8 Feb 2025</div>
+              <div class="tline-title">Cabinet formed — 24 ministers</div>
+              <div class="tline-body">LF 4, Amal 2, FPM 2, Hezbollah 2, PSP 1, Kataeb 1, Independents 12. First reformist-led cabinet since 2019 protests. Yassine Jaber (Amal) takes Finance; Tamara Elzein (Indep) takes Environment.</div>
+            </div>
+            <div>
+              <div class="tline-dot"></div>
+              <div class="tline-date">26 Feb 2025</div>
+              <div class="tline-title">Confidence vote: 95 / 128</div>
+              <div class="tline-body">Cabinet wins parliamentary confidence with 95 votes (LF, FPM, PSP, Kataeb, most Independents). 33 against (Shia Duo + Marada + minor blocs). Highest confidence margin of any post-2019 cabinet.</div>
+            </div>
+          </div>
+          <div class="evidence-mini">Evidence: [<a href="#">Raw sources (24)</a>] → [<a href="#">Processed analysis</a>] → [<a href="#">This assessment</a>]</div>
+        </div>
+      </div>
+
+      <!-- ============ CoM · DECISION-MAKING ============ -->
+      <div id="inst-st-dec" style="display:none">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Cabinet decision-making — quorum and veto</div>
+            <span class="info" data-tip="<strong>Quorum and veto thresholds.</strong> Constitutional Art. 65 sets the rules. Any party bloc holding ≥ 8 portfolios out of 24 has a working veto on fundamental matters."></span>
+            <span class="pill pill-pending" style="margin-left:auto">⏳ Pending review</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.65;margin-bottom:14px">
+            Lebanese constitutional practice (Art. 65) sets two thresholds for cabinet decisions: <strong style="color:var(--text-primary)">simple majority of those present (16/24 quorum)</strong> for routine matters, and <strong style="color:var(--text-primary)">two-thirds of all 24 ministers</strong> for "fundamental" matters — including emergencies, declarations of war, treaties, and any bill changing the electoral law or budget structure. Hezbollah's 2 + Amal's 2 = 4 portfolios <strong style="color:var(--critical)">does not meet</strong> the one-third blocking threshold (8) on its own; the Shia Duo's veto power on fundamental matters depends on coordination with absent independents to break quorum.
+          </div>
+          <div class="grid g-3" style="gap:10px;margin-bottom:14px">
+            <div class="kpi"><div class="lab">Total ministers</div><div class="v">24</div><div class="s">Quorum: 16 (two-thirds for fundamentals)</div></div>
+            <div class="kpi"><div class="lab">Shia Duo bloc</div><div class="v" style="color:var(--critical)">4</div><div class="s">Hez 2 + Amal 2 — quorum-breaking via absence</div></div>
+            <div class="kpi"><div class="lab">Reform-aligned ministers</div><div class="v" style="color:var(--teal)">17</div><div class="s">LF 4 + FPM 2 + PSP 1 + Kataeb 1 + 9 of 12 Independents</div></div>
+          </div>
+          <div class="panel-title" style="margin-top:8px;font-size:13px">Recent cabinet sessions</div>
+          <table class="tbl" style="margin-top:8px">
+            <thead><tr><th>Date</th><th>Subject</th><th>Outcome</th><th>Block / Driver</th></tr></thead>
+            <tbody>
+              <tr><td>16 Apr 2026</td><td class="sec">Capital Controls Law (Art. 65 fundamental)</td><td><span class="pill pill-critical">Adjourned — no quorum</span></td><td class="sec">Shia Duo absent (4); 4 Independents absent</td></tr>
+              <tr><td>09 Apr 2026</td><td class="sec">Bank-resolution framework (1st reading)</td><td><span class="pill pill-strained">Tabled — no consensus</span></td><td class="sec">Hezbollah objection on depositor-loss treatment</td></tr>
+              <tr><td>02 Apr 2026</td><td class="sec">EDL tariff revision (administrative)</td><td><span class="pill pill-stable">Passed 18 / 21 present</span></td><td class="sec">FPM voted yes after coalition swap</td></tr>
+              <tr><td>26 Mar 2026</td><td class="sec">Public-sector wage adjustment</td><td><span class="pill pill-stable">Passed 16 / 19 present</span></td><td class="sec">Quorum just met; Hez/Amal abstained</td></tr>
+              <tr><td>19 Mar 2026</td><td class="sec">Judicial-independence package referred to Parl.</td><td><span class="pill pill-strained">Partial — referred</span></td><td class="sec">Berri's calendar control delays Parl. floor</td></tr>
+            </tbody>
+          </table>
+          <div class="evidence-mini">Evidence: [<a href="#">Raw sources (18)</a>] → [<a href="#">Processed analysis</a>] → [<a href="#">This assessment</a>]</div>
+        </div>
+      </div>
+
+      <!-- ============ CoM · FOREIGN INFLUENCE ============ -->
+      <div id="inst-st-for" style="display:none">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Foreign influence on the cabinet — channels and outcomes</div>
+            <span class="info" data-tip="<strong>Channel mapping.</strong> Each foreign actor's influence vector with named meetings, public statements, financial flows, and observable outcomes. Sourced from Reuters, AFP, US State Dept readouts, French MFA briefings, Saudi Press Agency, Tehran Times."></span>
+            <span class="pill pill-pending" style="margin-left:auto">⏳ Pending review</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
+            <div class="panel-raised">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <div style="font-size:14px;font-weight:500">Saudi Arabia</div>
+                <span class="pill pill-stable">Aligned with reform</span>
+              </div>
+              <div class="kv">
+                <div class="k">Channels</div>
+                <div class="v">FM Khalid bin Salman 3 visits Jan–Mar 2025; coordinated public statement backing Salam (15 Jan 2025); reported BdL deposit-restoration assurance contingent on banking-resolution framework progress.</div>
+                <div class="k">Pushing for</div>
+                <div class="v"><strong>Banking-resolution framework</strong> · <strong>Hezbollah disarmament timetable</strong> · Lebanon-GCC visa thaw</div>
+                <div class="k">Outcomes</div>
+                <div class="v">Travel ban on Lebanon partially lifted Mar 2025. Saudi public statements at IMF Spring Meetings (Apr 2026) endorse Salam's reform path. Estimated $1.2B Saudi-backed liquidity facility under negotiation.</div>
+              </div>
+            </div>
+            <div class="panel-raised">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <div style="font-size:14px;font-weight:500">France</div>
+                <span class="pill pill-stable">Aligned with reform</span>
+              </div>
+              <div class="kv">
+                <div class="k">Channels</div>
+                <div class="v">Macron–Aoun bilateral 23 Jan 2025; FM Barrot Beirut visit Feb 2025. Long-standing CEDRE / Mandate-era ties. Salam ICJ alumni network.</div>
+                <div class="k">Pushing for</div>
+                <div class="v"><strong>IMF Staff-Level Agreement finalisation</strong> · UNIFIL mandate renewal terms · cultural / educational soft-power preservation</div>
+                <div class="k">Outcomes</div>
+                <div class="v">EU IMF support package floated Mar 2026. UNIFIL renewed Aug 2025 with strengthened mandate including border demarcation observers.</div>
+              </div>
+            </div>
+            <div class="panel-raised">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <div style="font-size:14px;font-weight:500">United States</div>
+                <span class="pill pill-stable">Aligned with reform</span>
+              </div>
+              <div class="kv">
+                <div class="k">Channels</div>
+                <div class="v">State Dept envoys (Hochstein, Ortagus) shuttle visits 2024–25; LAF training & equipment assistance; Treasury OFAC sanctions enforcement.</div>
+                <div class="k">Pushing for</div>
+                <div class="v"><strong>Hezbollah-linked entity sanctions enforcement</strong> · Israel–Lebanon border demarcation · LAF as sole legitimate armed force</div>
+                <div class="k">Outcomes</div>
+                <div class="v">3 new OFAC SDN designations Q1 2026 targeting BdL-era money-laundering networks. LAF receives $200M FY26 supplemental.</div>
+              </div>
+            </div>
+            <div class="panel-raised" style="border-left:2px solid var(--critical)">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <div style="font-size:14px;font-weight:500">Iran</div>
+                <span class="pill pill-critical">Opposed to reform agenda</span>
+              </div>
+              <div class="kv">
+                <div class="k">Channels</div>
+                <div class="v">IRGC-Quds Force liaison via Hezbollah (SG Naim Qassem, ongoing). Ambassador Mojtaba Amani public statements opposing Salam appointment Jan 2025.</div>
+                <div class="k">Pushing for</div>
+                <div class="v"><strong>Block bank restructuring losses on shareholders</strong> · preserve Hezbollah cabinet veto · stall LAF expansion in the south</div>
+                <div class="k">Outcomes</div>
+                <div class="v">Capital Controls Law adjourned 16 Apr 2026 quorum failure (Shia Duo absent). Iran financial support to Hezbollah estimated $700M – $1B annually (US Treasury 2018–2024 figures).</div>
+              </div>
+            </div>
+          </div>
+          <div class="evidence-mini">Evidence: [<a href="#">Raw sources (41)</a>] → [<a href="#">Processed analysis</a>] → [<a href="#">This assessment</a>]</div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -786,13 +951,13 @@ document.addEventListener('DOMContentLoaded', function(){
     </div>
   </div>
 
-  <div class="subtabs">
-    <div class="subtab active">Overview</div>
-    <div class="subtab">Career</div>
-    <div class="subtab">Network</div>
-    <div class="subtab">Record</div>
-    <div class="subtab">Foreign Contacts</div>
-    <div class="subtab">Sentiment</div>
+  <div class="subtabs" id="salam-subtabs">
+    <div class="subtab active" data-st="overview">Overview</div>
+    <div class="subtab" data-st="career">Career</div>
+    <div class="subtab" data-st="network">Network</div>
+    <div class="subtab disabled" title="Coming in production" data-st="record">Record</div>
+    <div class="subtab disabled" title="Coming in production" data-st="fc">Foreign Contacts</div>
+    <div class="subtab" data-st="sentiment">Sentiment</div>
   </div>
 
   <div class="grid g-4" style="margin-bottom:14px">
@@ -802,54 +967,245 @@ document.addEventListener('DOMContentLoaded', function(){
     <div class="kpi"><div class="lab">Confidence</div><div class="v">High</div><div class="s">Multi-source · 31 sources</div></div>
   </div>
 
-  <div class="grid g-2" style="gap:14px">
+  <!-- ============ Salam · OVERVIEW (default) ============ -->
+  <div id="salam-st-overview">
+    <div class="grid g-2" style="gap:14px">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Profile — bio, formation, beliefs</div>
+          <span class="info" data-tip="<strong>Profile.</strong> Public-record biographical synthesis. Sourced from Lebanese Government Gazette, UN Secretariat records, ICJ press, AUB / Sciences Po / Sorbonne / Harvard alumni records, family archive."></span>
+        </div>
+        <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.75">
+          <strong style="color:var(--text-primary)">Born</strong> 15 Dec 1953, Beirut. Sunni Muslim. Member of the Salam political dynasty — uncle Saeb Salam served as PM × 4 (1953, 1960–61, 1970–73, 1976), and cousin Tammam Salam as PM Feb 2014 – Dec 2016.<br><br>
+          <strong style="color:var(--text-primary)">Education</strong> — Lycée Français de Beyrouth; Sciences Po Paris (Diplôme); Université de la Sorbonne (Doctorat en histoire); Harvard Law School (LL.M.). Subsequent academic affiliations at AUB, Sciences Po, Princeton.<br><br>
+          <strong style="color:var(--text-primary)">Career arc</strong> — constitutional-law academic 1979–2007; Lebanon's UN Ambassador 2007–2017 (President of the UN Security Council May 2010 + Sep 2011); Judge of the International Court of Justice 2018–2025; ICJ President Feb 2024 – Feb 2025 (resigned to assume PM — first sitting ICJ President to leave for a domestic role).
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Documented public positions</div>
+          <span class="info" data-tip="<strong>Public positions.</strong> Documented from publication record, op-eds, ICJ jurisprudence, and parliamentary speeches. Each row labeled by source type."></span>
+        </div>
+        <ul class="rec-list">
+          <li>
+            <div class="t">✓ Anti-corruption advocate</div>
+            6 books on Lebanese constitutional reform (Brill, Saqi 2003–2013); op-eds in Le Monde, NYT, L'Orient Today on judicial accountability and elite-impunity patterns.
+            <div class="src">Source: Publication records · Op-ed archive · Confirmed</div>
+          </li>
+          <li>
+            <div class="t">✓ Taif Accord interpreter</div>
+            Frequently cited authority on the 1989 Taif Agreement and its constitutional consequences. Long-form treatments in academic journals 2003–2018.
+            <div class="src">Source: Academic record · L'Orient-Le Jour interviews · Confirmed</div>
+          </li>
+          <li>
+            <div class="t">✓ Judicial-independence advocate</div>
+            ICJ jurisprudence in dissent (Jadhav, Whaling) emphasised non-political application of law. Public statements 2018–2024 critical of executive interference in domestic judiciaries.
+            <div class="src">Source: ICJ Reports · ICJ press releases · Confirmed</div>
+          </li>
+          <li>
+            <div class="t">✓ Reform-oriented Sunni — outside patronage networks</div>
+            <strong style="color:var(--text-primary)">Not aligned</strong> with traditional Sunni political networks (Future Movement, Mikati orbit). Family connection (Saeb Salam) is to the pre-Civil-War notable class, not the post-2005 patronage economy.
+            <div class="src">Source: Carnegie Middle East · L'Orient Today · Investigative</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="evidence-mini" style="margin-top:14px">Evidence: [<a href="#">Raw sources (28)</a>] → [<a href="#">Processed analysis</a>] → [<a href="#">This assessment</a>]</div>
+  </div>
+
+  <!-- ============ Salam · CAREER ============ -->
+  <div id="salam-st-career" style="display:none">
+    <div class="grid g-2" style="gap:14px">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Career timeline</div>
+          <span class="info" data-tip="<strong>Career timeline.</strong> 9 dated milestones from Bar admission 1979 to current. Sourced from UN Secretariat, ICJ press, Lebanese Government Gazette."></span>
+        </div>
+        <div class="tline" style="margin-top:8px">
+          <div>
+            <div class="tline-dot"></div>
+            <div class="tline-date">1979</div>
+            <div class="tline-title">Joined Lebanese Bar</div>
+            <div class="tline-body">Admitted to the Beirut Bar following Sciences Po + Sorbonne studies. Begins constitutional-law academic track.</div>
+          </div>
+          <div>
+            <div class="tline-dot"></div>
+            <div class="tline-date">Jul 2007 – Dec 2017</div>
+            <div class="tline-title">Lebanon's Ambassador to the UN</div>
+            <div class="tline-body">10-year tenure spanning four presidents and three PMs. Lebanon's longest-serving UN ambassador.</div>
+          </div>
+          <div>
+            <div class="tline-dot"></div>
+            <div class="tline-date">May 2010 / Sep 2011</div>
+            <div class="tline-title">President of the UN Security Council</div>
+            <div class="tline-body">Lebanon's rotating presidency under Salam: shaped Resolution 1701 implementation framework on the South-Lebanon border.</div>
+          </div>
+          <div>
+            <div class="tline-dot"></div>
+            <div class="tline-date">Feb 2018</div>
+            <div class="tline-title">Elected ICJ Judge</div>
+            <div class="tline-body">UNGA + UNSC concurrent vote (15-judge bench). 9-year term beginning Feb 2018.</div>
+          </div>
+          <div>
+            <div class="tline-dot"></div>
+            <div class="tline-date">6 Feb 2024</div>
+            <div class="tline-title">Elected ICJ President</div>
+            <div class="tline-body">First Lebanese national, second Arab to hold the post. 15 ICJ judges' vote. Presided over the South Africa v. Israel proceedings.</div>
+          </div>
+          <div>
+            <div class="tline-dot warn"></div>
+            <div class="tline-date">13 Jan 2025</div>
+            <div class="tline-title">Designated PM — resigned ICJ presidency</div>
+            <div class="tline-body">Historic first: a sitting ICJ President resigning for a domestic political role. Resignation transmitted to the Court 16 Jan 2025.</div>
+          </div>
+          <div>
+            <div class="tline-dot"></div>
+            <div class="tline-date">8 Feb 2025</div>
+            <div class="tline-title">Cabinet formed</div>
+            <div class="tline-body">24-minister cabinet, three weeks of formation negotiations. Reformist majority.</div>
+          </div>
+          <div>
+            <div class="tline-dot"></div>
+            <div class="tline-date">26 Feb 2025</div>
+            <div class="tline-title">Confidence vote 95 / 128</div>
+            <div class="tline-body">Strongest confidence margin of any post-2019 cabinet.</div>
+          </div>
+          <div>
+            <div class="tline-dot crit"></div>
+            <div class="tline-date">16 Apr 2026</div>
+            <div class="tline-title">Capital Controls Law impasse</div>
+            <div class="tline-body">Cabinet quorum failure on the Capital Controls Law (Art. 65 fundamental matter). Reform agenda's first major setback.</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Positions — current & past</div>
+          <span class="info" data-tip="<strong>Career record.</strong> Each row sourced from official records (UN, ICJ, Lebanese Government Gazette). Entries are immutable once verified."></span>
+        </div>
+        <table class="tbl">
+          <tr><td>Prime Minister of Lebanon</td><td class="sec">Feb 2025 – present</td></tr>
+          <tr><td>President, International Court of Justice</td><td class="sec">Feb 2024 – Feb 2025</td></tr>
+          <tr><td>Judge, ICJ</td><td class="sec">Feb 2018 – Feb 2025</td></tr>
+          <tr><td>Lebanon's Ambassador to the UN</td><td class="sec">Jul 2007 – Dec 2017</td></tr>
+          <tr><td>President, UN Security Council</td><td class="sec">May 2010, Sep 2011 (rotating)</td></tr>
+          <tr><td>Visiting Professor, AUB / Sciences Po / Princeton</td><td class="sec">1992 – 2007</td></tr>
+          <tr><td>Lebanese Bar — practising attorney</td><td class="sec">1979 – 2007</td></tr>
+        </table>
+        <div style="height:14px"></div>
+        <div class="panel-title" style="font-size:13px;margin-bottom:8px">Career achievements</div>
+        <ul class="rec-list">
+          <li><div class="t">✓ ICJ presidency — first Lebanese, second Arab</div>UN official record. Elected 6 Feb 2024 by 15 ICJ judges.<div class="src">Source: UN official record · 2024 · Confirmed</div></li>
+          <li><div class="t">✓ UN Resolution 1701 advocacy</div>Implementation framework during Lebanon's UNSC term (2010–11).<div class="src">Source: UN records · 2010–2011 · Confirmed</div></li>
+          <li><div class="t">✓ Author — 6 books on Lebanese constitutional reform</div>Published 2003–2013 (Brill, Saqi).<div class="src">Source: Publication records · Confirmed</div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="evidence-mini" style="margin-top:14px">Evidence: [<a href="#">Raw sources (12)</a>] → [<a href="#">Processed analysis</a>] → [<a href="#">This assessment</a>]</div>
+  </div>
+
+  <!-- ============ Salam · NETWORK ============ -->
+  <div id="salam-st-network" style="display:none">
     <div class="panel">
       <div class="panel-head">
-        <div class="panel-title">Career — current and past positions</div>
-        <span class="info" data-tip="<strong>Career record.</strong> Each row sourced from official records (UN, ICJ, Lebanese Government Gazette). Entries are immutable once verified."></span>
+        <div class="panel-title">Salam — relationship map</div>
+        <span class="info" data-tip="<strong>Relationship map.</strong> 3-column structured list — family, domestic, foreign. Tier 1 named relationships only — no inferred ties."></span>
+        <span class="pill pill-pending" style="margin-left:auto">⏳ Pending review</span>
       </div>
-      <table class="tbl">
-        <tr><td>Prime Minister of Lebanon</td><td class="sec">Feb 2025 – present</td></tr>
-        <tr><td>President, International Court of Justice</td><td class="sec">Feb 2024 – Feb 2025</td></tr>
-        <tr><td>Judge, ICJ</td><td class="sec">Feb 2018 – Feb 2025</td></tr>
-        <tr><td>Lebanon's Ambassador to the UN</td><td class="sec">Jul 2007 – Dec 2017</td></tr>
-        <tr><td>Visiting Professor, AUB / Sciences Po</td><td class="sec">1992 – 2007</td></tr>
+      <div class="grid g-3" style="gap:14px;margin-top:8px">
+        <div>
+          <div class="panel-title" style="font-size:13px;margin-bottom:8px">Family</div>
+          <ul class="rec-list">
+            <li><div class="t">Saeb Salam — uncle</div>PM × 4 (1953, 1960–61, 1970–73, 1976). Sunni Beirut political notable class.<div class="src">Source: Lebanese Gazette · Confirmed</div></li>
+            <li><div class="t">Tammam Salam — cousin</div>PM Feb 2014 – Dec 2016.<div class="src">Source: Lebanese Gazette · Confirmed</div></li>
+            <li><div class="t">Salim Salam — grandfather</div>Late-Ottoman / early-Republican Beirut deputy. Founded the family's political role.<div class="src">Source: Historical record · Confirmed</div></li>
+          </ul>
+        </div>
+        <div>
+          <div class="panel-title" style="font-size:13px;margin-bottom:8px">Domestic — allies & tensions</div>
+          <ul class="rec-list">
+            <li><div class="t">✓ Joseph Aoun — President</div>Aligned on reform, anti-patronage agenda. Maronite, LAF former. Joint statements on judicial reform.<div class="src">Allied · Confirmed</div></li>
+            <li><div class="t">✓ Yassine Jaber — Finance Min.</div>Independent (within Amal portfolio quota). Cooperates on IMF SLA technical track.<div class="src">Working relationship · Documented</div></li>
+            <li><div class="t">✓ Reformist civil society</div>Sabaa, Beirut Madinati, LCPS. Long-standing intellectual ties pre-dating PM role.<div class="src">Allied · Confirmed</div></li>
+            <li class="warn"><div class="t">⚠ Hezbollah leadership</div>Opposed his appointment Jan 2025. Ongoing friction on banking-sector reform; informal veto via cabinet portfolios.<div class="src">Tension · Documented · Reuters, Al Jazeera, L'Orient Today</div></li>
+            <li class="warn"><div class="t">⚠ Traditional Sunni patronage</div>Saad Hariri (Future) and Najib Mikati orbit see Salam as outside the patronage system. Limited public statements; quiet distancing.<div class="src">Tension · Documented</div></li>
+          </ul>
+        </div>
+        <div>
+          <div class="panel-title" style="font-size:13px;margin-bottom:8px">Foreign</div>
+          <ul class="rec-list">
+            <li><div class="t">✓ France</div>Macron–Salam direct line; ICJ alumni network; CEDRE legacy.<div class="src">Aligned · Confirmed</div></li>
+            <li><div class="t">✓ Saudi Arabia</div>Backed appointment; FM Khalid bin Salman 3 visits Jan–Mar 2025.<div class="src">Aligned · Confirmed</div></li>
+            <li><div class="t">✓ United States</div>State Dept supported appointment; Treasury / OFAC coordination on sanctions enforcement.<div class="src">Aligned · Confirmed</div></li>
+            <li><div class="t">✓ ICJ alumni network</div>Global jurists' network; particularly active 2024 South Africa v. Israel proceedings.<div class="src">Soft power · Confirmed</div></li>
+            <li class="warn"><div class="t">⚠ Iran</div>Ambassador Amani opposed Salam appointment publicly Jan 2025. Working through Hezbollah/Amal to stall reforms.<div class="src">Tension · Documented</div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="evidence-mini">Evidence: [<a href="#">Raw sources (37)</a>] → [<a href="#">Processed analysis</a>] → [<a href="#">This assessment</a>]</div>
+    </div>
+  </div>
+
+  <!-- ============ Salam · SENTIMENT ============ -->
+  <div id="salam-st-sentiment" style="display:none">
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-head">
+        <div class="panel-title">Community sentiment toward PM Salam — last 7 days</div>
+        <span class="info" data-tip="<strong>Community sentiment.</strong> Net sentiment per community, weighted by source reliability. Range −100 to +100. Computed across Arabic, English, French press."></span>
+        <span class="pill pill-pending" style="margin-left:auto">⏳ Pending review</span>
+      </div>
+      <table class="tbl" style="margin-top:8px">
+        <thead><tr><th>Community</th><th>Sub-segment</th><th>Net sentiment</th><th>Trend (90d)</th></tr></thead>
+        <tbody>
+          <tr><td>Sunni</td><td class="sec">Civil society / reform-aligned</td><td><span class="pill pill-stable">+24</span></td><td class="sec" style="color:var(--teal)">↑ steadily improving</td></tr>
+          <tr><td>Sunni</td><td class="sec">Traditional patronage networks</td><td><span class="pill pill-strained">−18</span></td><td class="sec" style="color:var(--text-secondary)">↔ flat</td></tr>
+          <tr><td>Shia</td><td class="sec">Hezbollah-aligned media</td><td><span class="pill pill-critical">−45</span></td><td class="sec" style="color:var(--critical)">↓ deteriorating after Capital Controls Law impasse</td></tr>
+          <tr><td>Shia</td><td class="sec">Amal-aligned media</td><td><span class="pill pill-strained">−22</span></td><td class="sec" style="color:var(--text-secondary)">↔ flat</td></tr>
+          <tr><td>Maronite (Christian)</td><td class="sec">All outlets</td><td><span class="pill pill-stable">+12</span></td><td class="sec" style="color:var(--teal)">↑ improving</td></tr>
+          <tr><td>Greek Orthodox (Christian)</td><td class="sec">All outlets</td><td><span class="pill pill-stable">+18</span></td><td class="sec" style="color:var(--teal)">↑ improving</td></tr>
+          <tr><td>Druze</td><td class="sec">PSP / Jumblatt-aligned</td><td><span class="pill pill-stable">+8</span></td><td class="sec" style="color:var(--text-secondary)">↔ flat</td></tr>
+          <tr><td>Secular / civil</td><td class="sec">Reform-NGO press, Daraj, Beirut Today</td><td><span class="pill pill-stable">+52</span></td><td class="sec" style="color:var(--teal)">↑↑ strongly improving</td></tr>
+        </tbody>
       </table>
     </div>
 
-    <div class="panel">
-      <div class="panel-head">
-        <div class="panel-title">Record — achievements & concerns</div>
-        <span class="info" data-tip="<strong>Record.</strong> Achievements (teal) and concerns (amber) are each labeled by source type — Official, Investigative journalism, Research institution, Sanctions record — so subscribers apply their own weight."></span>
+    <div class="grid g-2" style="gap:14px">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Source-affiliation breakdown</div>
+        </div>
+        <table class="tbl" style="margin-top:8px">
+          <thead><tr><th>Source class</th><th>Tone</th><th>Reliability avg.</th></tr></thead>
+          <tbody>
+            <tr><td>Independent press</td><td><span class="pill pill-stable">Neutral-positive</span></td><td class="sec mono">0.86</td></tr>
+            <tr><td>State media (NNA, BdL public data)</td><td><span class="pill pill-stable">Neutral</span></td><td class="sec mono">0.78</td></tr>
+            <tr><td>Hezbollah-aligned outlets (Al-Manar, Al-Akhbar)</td><td><span class="pill pill-critical">Negative</span></td><td class="sec mono">0.60</td></tr>
+            <tr><td>Amal-aligned outlets (NBN)</td><td><span class="pill pill-strained">Negative-mixed</span></td><td class="sec mono">0.62</td></tr>
+            <tr><td>FPM-aligned outlets (OTV)</td><td><span class="pill pill-strained">Mixed</span></td><td class="sec mono">0.62</td></tr>
+            <tr><td>Foreign state media (RT Arabic)</td><td><span class="pill pill-strained">Critical-mixed</span></td><td class="sec mono">0.45</td></tr>
+          </tbody>
+        </table>
       </div>
-      <ul class="rec-list">
-        <li>
-          <div class="t">✓ ICJ presidency — first Lebanese, second Arab</div>
-          UN official record. Elected 6 Feb 2024 by 15 ICJ judges.
-          <div class="src">Source: UN official record · 2024 · Confirmed</div>
-        </li>
-        <li>
-          <div class="t">✓ UN Resolution 1701 advocacy</div>
-          Implementation framework during Lebanon's UNSC term (2010–11).
-          <div class="src">Source: UN records · 2010–2011 · Confirmed</div>
-        </li>
-        <li>
-          <div class="t">✓ Author — 6 books on Lebanese constitutional reform</div>
-          Published 2003–2013 (Brill, Saqi).
-          <div class="src">Source: Publication records · Confirmed</div>
-        </li>
-        <li class="warn">
-          <div class="t">⚠ No corruption records found</div>
-          Last cross-checked across OFAC, EU, UN, OCCRP, ICIJ, Daraj, Public Source.
-          <div class="src">Last checked: <span class="demo-today">28 Apr 2026</span></div>
-        </li>
-        <li class="warn">
-          <div class="t">⚠ Hezbollah opposition to appointment</div>
-          Hezbollah opposed his nomination — political, not legal basis.
-          <div class="src">Source: Reuters, Al Jazeera, L'Orient Today · Jan 2025 · Documented</div>
-        </li>
-      </ul>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">90-day sentiment trendline</div>
+        </div>
+        <div style="height:140px;position:relative;background:var(--canvas);border-radius:4px;padding:12px;margin-top:8px">
+          <svg width="100%" height="100%" viewBox="0 0 380 110" preserveAspectRatio="none">
+            <line x1="0" y1="55" x2="380" y2="55" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>
+            <text x="2" y="14" font-size="9" fill="var(--text-tertiary)" font-family="JetBrains Mono">+30</text>
+            <text x="2" y="58" font-size="9" fill="var(--text-tertiary)" font-family="JetBrains Mono">0</text>
+            <text x="2" y="105" font-size="9" fill="var(--text-tertiary)" font-family="JetBrains Mono">−30</text>
+            <polyline fill="none" stroke="var(--teal)" stroke-width="1.5" points="30,75 60,68 90,62 120,55 150,48 180,42 210,38 240,30 270,25 300,28 330,22 365,18"/>
+            <circle cx="365" cy="18" r="2.5" fill="var(--teal)"/>
+            <text x="350" y="105" font-size="9" fill="var(--text-tertiary)" font-family="JetBrains Mono">today</text>
+            <text x="20" y="105" font-size="9" fill="var(--text-tertiary)" font-family="JetBrains Mono">90d ago</text>
+          </svg>
+        </div>
+        <div style="font-size:11.5px;color:var(--text-secondary);margin-top:8px;line-height:1.65">Aggregate sentiment across all monitored sources, reliability-weighted. Net rose from −2 (90d) to +18 today. Brief dip after Capital Controls Law adjournment quickly recovered as commentators framed Salam as the constraint not the cause.</div>
+      </div>
     </div>
+    <div class="evidence-mini" style="margin-top:14px">Evidence: [<a href="#">Raw sources (84)</a>] → [<a href="#">Processed analysis</a>] → [<a href="#">This assessment</a>]</div>
   </div>
 </section>
 
@@ -1012,10 +1368,10 @@ document.addEventListener('DOMContentLoaded', function(){
     <div class="subtab active" data-st="macro">Macro</div>
     <div class="subtab" data-st="mon">Monetary &amp; Exchange</div>
     <div class="subtab" data-st="fiscal">Fiscal</div>
-    <div class="subtab" data-st="bank">Banking</div>
+    <div class="subtab disabled" title="Coming in production" data-st="bank">Banking</div>
     <div class="subtab" data-st="reform">Reform Tracker</div>
     <div class="subtab" data-st="sanc">Sanctions</div>
-    <div class="subtab" data-st="ext">External</div>
+    <div class="subtab disabled" title="Coming in production" data-st="ext">External</div>
   </div>
 
   <div id="econ-macro">
@@ -1079,6 +1435,200 @@ document.addEventListener('DOMContentLoaded', function(){
       </table>
     </div>
   </div>
+
+  <!-- ============ Econ · MONETARY & EXCHANGE ============ -->
+  <div id="econ-mon" style="display:none">
+    <div class="grid g-3" style="margin-bottom:14px">
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Sayrafa rate (BdL)</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px">LL 89,500 <span style="font-size:13px;color:var(--text-tertiary)">/ USD</span></div>
+        <div style="font-size:11.5px;color:var(--text-secondary);margin-top:4px">Anchor since Apr 2025 · Souaid policy</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">BdL · daily auction</div>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Parallel market</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px">LL 92,000 – 93,500</div>
+        <div style="font-size:11.5px;color:var(--warning);margin-top:4px">↑ Drifting since Mar 2026</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">L'Orient Today · Reuters</div>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Corridor gap</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px;color:var(--warning)">3 – 4 %</div>
+        <div style="font-size:11.5px;color:var(--text-secondary);margin-top:4px">Widening since Mar 2026</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">Computed daily</div>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">BdL liquid reserves</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px">~$10.0 B</div>
+        <div style="font-size:11.5px;color:var(--warning);margin-top:4px">↓ Narrowing</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">BdL public data · Apr 2026</div>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Inter-bank standing facility</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px">Active</div>
+        <div style="font-size:11.5px;color:var(--text-secondary);margin-top:4px">Weekly auctions · 90-day average</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">BdL Circular 165</div>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Souaid stated policy</div>
+        <div style="font-size:14px;font-weight:500;margin-top:4px;line-height:1.5">Defend the corridor; no new currency printing</div>
+        <div style="font-size:11px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">Statement · 12 Apr 2026</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Sayrafa vs. parallel market — 90-day series</div>
+        <span class="info" data-tip="<strong>FX corridor.</strong> Daily Sayrafa anchor vs. mid-market parallel rate. Gap widening signals market doubts about BdL's ability to defend the peg."></span>
+        <span class="pill pill-pending" style="margin-left:auto">⏳ Pending review</span>
+      </div>
+      <div style="height:180px;background:var(--canvas);border-radius:4px;padding:14px;margin-top:8px;position:relative">
+        <svg width="100%" height="100%" viewBox="0 0 460 150" preserveAspectRatio="none">
+          <text x="2" y="14" font-size="9" fill="var(--text-tertiary)" font-family="JetBrains Mono">95k</text>
+          <text x="2" y="78" font-size="9" fill="var(--text-tertiary)" font-family="JetBrains Mono">90k</text>
+          <text x="2" y="142" font-size="9" fill="var(--text-tertiary)" font-family="JetBrains Mono">85k</text>
+          <line x1="30" y1="78" x2="450" y2="78" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <polyline fill="none" stroke="var(--teal)" stroke-width="1.5" points="30,78 100,78 170,78 240,78 310,78 380,78 450,78"/>
+          <polyline fill="none" stroke="var(--warning)" stroke-width="1.5" points="30,72 100,68 170,62 240,55 310,46 380,38 450,32"/>
+          <text x="380" y="100" font-size="9" fill="var(--teal)" font-family="JetBrains Mono">Sayrafa anchor</text>
+          <text x="380" y="22" font-size="9" fill="var(--warning)" font-family="JetBrains Mono">Parallel market</text>
+          <text x="32" y="148" font-size="9" fill="var(--text-tertiary)" font-family="JetBrains Mono">90d ago</text>
+          <text x="430" y="148" font-size="9" fill="var(--text-tertiary)" font-family="JetBrains Mono">today</text>
+        </svg>
+      </div>
+    </div>
+    <div class="evidence-mini" style="margin-top:14px">Evidence: [<a href="#">Raw sources (22)</a>] → [<a href="#">Processed analysis</a>] → [<a href="#">This assessment</a>]</div>
+  </div>
+
+  <!-- ============ Econ · FISCAL ============ -->
+  <div id="econ-fiscal" style="display:none">
+    <div class="grid g-3" style="margin-bottom:14px">
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">2026 Budget — total</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px">LL 295 T</div>
+        <div style="font-size:11.5px;color:var(--text-secondary);margin-top:4px">~$3.3 B at official · ~$3.1 B at parallel</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">Ministry of Finance · Mar 2026</div>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Deficit (% of GDP)</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px;color:var(--warning)">~10 %</div>
+        <div style="font-size:11.5px;color:var(--text-secondary);margin-top:4px">BdL bridge facility + new T-bills</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">IMF · World Bank · Apr 2026</div>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">External debt</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px;color:var(--critical)">$32 B</div>
+        <div style="font-size:11.5px;color:var(--critical);margin-top:4px">Eurobonds in default since Mar 2020</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">Ministry of Finance · IMF</div>
+      </div>
+    </div>
+    <div class="grid g-2" style="gap:14px">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Revenue composition · 2026</div>
+        </div>
+        <table class="tbl" style="margin-top:8px">
+          <tr><td>Customs</td><td class="sec">~32 %</td></tr>
+          <tr><td>VAT</td><td class="sec">~28 %</td></tr>
+          <tr><td>Telecom (state-owned operators)</td><td class="sec">~16 %</td></tr>
+          <tr><td>EDL fees + electricity surcharges</td><td class="sec">~10 %</td></tr>
+          <tr><td>Other (income tax, stamp duties, fees)</td><td class="sec">~14 %</td></tr>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Spending composition · 2026</div>
+        </div>
+        <table class="tbl" style="margin-top:8px">
+          <tr><td>Wages (LAF, ISF, civil service, judiciary)</td><td class="sec">38 %</td></tr>
+          <tr><td>Debt service</td><td class="sec">22 %</td></tr>
+          <tr><td>Subsidies (electricity, bread, fuel)</td><td class="sec">16 %</td></tr>
+          <tr><td>Healthcare (incl. MoPH transfers)</td><td class="sec">8 %</td></tr>
+          <tr><td>Education</td><td class="sec">7 %</td></tr>
+          <tr><td>Other (capex, transfers, social)</td><td class="sec">9 %</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-head">
+        <div class="panel-title">Capital Controls Law — depositor-loss treatment</div>
+        <span class="info" data-tip="<strong>Capital Controls Law.</strong> Would partially codify depositor-loss treatment for the $86B in unrecognised deposits. Stuck in Parliament's reform committee since Mar 2024."></span>
+        <span class="pill pill-critical" style="margin-left:auto">Stuck in Parliament</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.7;margin-top:8px">
+        The Capital Controls Law would formalise restrictions on dollar withdrawals and partially resolve depositor losses (~$86 B in unrecognised pre-2019 deposits). It is currently <strong style="color:var(--text-primary)">stuck in Parliament's reform committee</strong>; the 16 Apr 2026 cabinet session adjourned without quorum on the executive draft. Hezbollah and Amal block the depositor-loss treatment provisions, citing impact on Shia-affiliated bank shareholders. Without this law, the IMF Staff-Level Agreement remains unfinalised and Eurobond restructuring is blocked.
+      </div>
+    </div>
+    <div class="evidence-mini" style="margin-top:14px">Evidence: [<a href="#">Raw sources (31)</a>] → [<a href="#">Processed analysis</a>] → [<a href="#">This assessment</a>]</div>
+  </div>
+
+  <!-- ============ Econ · REFORM TRACKER ============ -->
+  <div id="econ-reform" style="display:none">
+    <div style="padding:14px 16px;background:rgba(232,155,34,0.10);border-left:2px solid var(--warning);border-radius:0 6px 6px 0;display:flex;align-items:center;gap:14px;margin-bottom:14px">
+      <span style="color:var(--warning);font-size:18px">⚠</span>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:500">IMF Staff-Level Agreement: April 2022</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">8 prior actions required · <span style="color:var(--teal)">1 completed</span> · <span style="color:var(--warning)">1 partial</span> · <span style="color:var(--critical)">6 pending</span> · 4 years overdue</div>
+      </div>
+      <a href="#" style="font-size:12px;color:var(--teal);text-decoration:none;border-bottom:1px dashed var(--teal-dim)">View full SLA →</a>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden">
+      <table class="tbl">
+        <thead><tr><th>Condition</th><th style="width:120px">Status</th><th style="width:200px">Responsible</th><th style="width:160px">Deadline</th><th style="width:120px;text-align:right">Confidence</th></tr></thead>
+        <tbody>
+          <tr><td>Bank secrecy law amendment (Law 306)</td><td><span style="color:var(--teal)">✓ Completed</span></td><td class="sec">Parliament</td><td class="sec mono" style="color:var(--text-secondary)">Oct 2025 ✓</td><td style="text-align:right"><span class="pill pill-tier1">Named · 3 sources</span></td></tr>
+          <tr><td>Banking resolution framework</td><td><span style="color:var(--critical)">× Pending</span></td><td class="sec">Parliament</td><td class="sec mono" style="color:var(--critical)">Overdue 18 months</td><td style="text-align:right"><span class="pill pill-tier1">Named · 3 sources</span></td></tr>
+          <tr><td>Capital controls legislation</td><td><span style="color:var(--critical)">× Pending</span></td><td class="sec">Ministry of Finance</td><td class="sec mono" style="color:var(--critical)">Overdue 24 months</td><td style="text-align:right"><span class="pill pill-tier1">Named · 3 sources</span></td></tr>
+          <tr><td>BdL governance reform</td><td><span style="color:var(--critical)">× Pending</span></td><td class="sec">BdL / Parliament</td><td class="sec mono" style="color:var(--critical)">Overdue 12 months</td><td style="text-align:right"><span class="pill pill-tier1">Named · 3 sources</span></td></tr>
+          <tr><td>Electricity sector reform</td><td><span style="color:var(--critical)">× Pending</span></td><td class="sec">Ministry of Energy</td><td class="sec mono" style="color:var(--critical)">Overdue 10 months</td><td style="text-align:right"><span class="pill pill-tier1">Named · 3 sources</span></td></tr>
+          <tr><td>Public finance reform</td><td><span style="color:var(--critical)">× Pending</span></td><td class="sec">Ministry of Finance</td><td class="sec mono" style="color:var(--critical)">Overdue 14 months</td><td style="text-align:right"><span class="pill pill-tier2">Described · 3 sources</span></td></tr>
+          <tr><td>Judicial reform package</td><td><span style="color:var(--warning)">◐ Partial</span></td><td class="sec">Parliament</td><td class="sec mono" style="color:var(--text-secondary)">Jul 2025 / partial</td><td style="text-align:right"><span class="pill pill-tier1">Named · 3 sources</span></td></tr>
+          <tr><td>Financial gap resolution law</td><td><span style="color:var(--critical)">× Pending</span></td><td class="sec">Parliament</td><td class="sec mono" style="color:var(--text-tertiary)">TBD</td><td style="text-align:right"><span class="pill pill-tier1">Named · 3 sources</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="evidence-mini" style="margin-top:14px">Evidence: [<a href="#">Raw sources (7)</a>] → [<a href="#">Processed analysis</a>] → [<a href="#">This assessment</a>]</div>
+  </div>
+
+  <!-- ============ Econ · SANCTIONS ============ -->
+  <div id="econ-sanc" style="display:none">
+    <div class="grid g-3" style="margin-bottom:14px">
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">OFAC SDN — Lebanon-linked</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px">187</div>
+        <div style="font-size:11.5px;color:var(--text-secondary);margin-top:4px">Persons + entities · cumulative</div>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Q1 2026 — new EU designations</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px;color:var(--warning)">3</div>
+        <div style="font-size:11.5px;color:var(--text-secondary);margin-top:4px">BdL-era money-laundering channels</div>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Salameh frozen accounts</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px">$330 M</div>
+        <div style="font-size:11.5px;color:var(--text-secondary);margin-top:4px">EU + UK + CH · est. fingerprints</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Recent designations</div>
+        <span class="info" data-tip="<strong>Sanctions register.</strong> Cross-jurisdiction view of OFAC, EU Council, UK OFSI, UN, and Canadian designations on Lebanon-linked persons and entities. Cross-references to Person + Institution profiles where available."></span>
+        <span class="pill pill-pending" style="margin-left:auto">⏳ Pending review</span>
+      </div>
+      <table class="tbl" style="margin-top:8px">
+        <thead><tr><th>Authority</th><th>Date</th><th>Entity</th><th>Type</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill pill-critical">OFAC</span></td><td class="sec mono">17 Mar 2026</td><td>Network of 4 exchange houses (Beirut, Ouzaï)</td><td class="sec">Money network</td><td class="sec">Hezbollah financial conduit (E.O. 13224)</td></tr>
+          <tr><td><span class="pill pill-critical">OFAC</span></td><td class="sec mono">02 Feb 2026</td><td>Two unnamed BdL-aligned advisors</td><td class="sec">Persons</td><td class="sec">Pre-2019 money-laundering scheme</td></tr>
+          <tr><td><span class="pill pill-strained">EU Council</span></td><td class="sec mono">12 Mar 2026</td><td>Three Beirut-based shell companies</td><td class="sec">Entities</td><td class="sec">Salameh-era depositor-fund laundering</td></tr>
+          <tr><td><span class="pill pill-strained">UK OFSI</span></td><td class="sec mono">05 Mar 2026</td><td>Riad Salameh-affiliated holding</td><td class="sec">Entity</td><td class="sec">Asset freeze · proceeds-of-crime</td></tr>
+          <tr><td><span class="pill pill-critical">OFAC</span></td><td class="sec mono">10 Aug 2023</td><td>Riad Salameh + family</td><td class="sec">Persons</td><td class="sec">Corruption / money laundering · GLOMAG</td></tr>
+          <tr><td><span class="pill pill-critical">OFAC</span></td><td class="sec mono">2018 (cumulative)</td><td>Hezbollah leadership inc. Naim Qassem</td><td class="sec">Organisation + persons</td><td class="sec">SDGT (E.O. 13224)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="evidence-mini" style="margin-top:14px">Evidence: [<a href="#">Raw sources (12)</a>] → [<a href="#">Processed analysis</a>] → [<a href="#">This assessment</a>] · Cross-refs: <a href="#">Salameh profile</a>, <a href="#">Hezbollah profile</a>, <a href="#">BdL institution</a></div>
+  </div>
+
 </section>
 
 <!-- ============== PARTIES ============== -->
@@ -1449,11 +1999,25 @@ document.querySelectorAll('.tab').forEach(t=>{
 });
 
 /* ===== Subtab generic toggling within a tabpanel ===== */
+// ===== Sub-tab panel switching =====
+// Map of subtab group id -> { data-st value -> panel element id }. null means
+// the sub-tab is disabled / has no panel (renders "Coming in production" tooltip).
+const SUBTAB_PANEL_IDS = {
+  'inst-subtabs':  { current: 'inst-st-current', history: 'inst-st-history', dec: 'inst-st-dec', for: 'inst-st-for', net: null, mile: null, perf: null },
+  'salam-subtabs': { overview: 'salam-st-overview', career: 'salam-st-career', network: 'salam-st-network', sentiment: 'salam-st-sentiment', record: null, fc: null },
+  'econ-subtabs':  { macro: 'econ-macro', mon: 'econ-mon', fiscal: 'econ-fiscal', bank: null, reform: 'econ-reform', sanc: 'econ-sanc', ext: null }
+};
 document.querySelectorAll('.subtabs').forEach(group=>{
+  const map = SUBTAB_PANEL_IDS[group.id] || {};
   group.querySelectorAll('.subtab').forEach(s=>{
     s.addEventListener('click', ()=>{
+      if (s.classList.contains('disabled')) return;
       group.querySelectorAll('.subtab').forEach(x=>x.classList.remove('active'));
       s.classList.add('active');
+      const st = s.dataset.st;
+      Object.values(map).forEach(id => { if (id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; } });
+      const showId = map[st];
+      if (showId) { const el = document.getElementById(showId); if (el) el.style.display = ''; }
     });
   });
 });
