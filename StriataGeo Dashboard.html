@@ -264,6 +264,18 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* HOSTILE SENT */
 .toneseg{flex:1;height:100%}
 </style>
+<script>
+// Anchor for the static demo. Flip this line to re-anchor the demo's "as of" date.
+// TODO: data-layer — replace with a real "as_of" timestamp from the data source.
+const DEMO_TODAY = new Date('2026-04-28T09:00:00Z');
+function todayLabel(){
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return String(DEMO_TODAY.getUTCDate()).padStart(2,'0') + ' ' + months[DEMO_TODAY.getUTCMonth()] + ' ' + DEMO_TODAY.getUTCFullYear();
+}
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.demo-today').forEach(function(el){ el.textContent = todayLabel(); });
+});
+</script>
 </head>
 <body>
 
@@ -286,7 +298,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
       <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
         <rect x="2" y="3" width="12" height="11" rx="1"/><path d="M2 6h12M5 1v3M11 1v3"/>
       </svg>
-      <span id="date-label">26 Apr 2026</span> <span class="caret">▾</span>
+      <span id="date-label" class="demo-today">28 Apr 2026</span> <span class="caret">▾</span>
     </button>
     <div class="pop" id="date-pop">
       <label>Quick select</label>
@@ -376,7 +388,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
       <div style="border-top:1px solid var(--border-subtle);margin-top:14px;padding-top:12px">
         <div style="font-size:11px;color:var(--warning);margin-bottom:8px;display:flex;align-items:center;gap:6px">
           <span class="pill pill-pending">⏳ Pending review</span>
-          <span style="color:var(--text-tertiary)">AI assessment · 26 Apr 2026 · 14:18 UTC</span>
+          <span style="color:var(--text-tertiary)">AI assessment · <span class="demo-today">28 Apr 2026</span> · 14:18 UTC</span>
         </div>
         <p style="font-size:12px;color:var(--text-secondary);line-height:1.6;margin:0">
           The Salam government completed its first 80 days with a partial constitutional functioning: cabinet sessions occur on schedule, but no major reform decree has cleared cabinet since the bank-secrecy amendment. Parliament's reform committee remains stalled on the banking-resolution framework. Banking-sector stability deteriorates as the gap between official Sayrafa rate and parallel market widens. LAF deployment in the south continues without incident under the November 2025 ceasefire.
@@ -823,7 +835,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         <li class="warn">
           <div class="t">⚠ No corruption records found</div>
           Last cross-checked across OFAC, EU, UN, OCCRP, ICIJ, Daraj, Public Source.
-          <div class="src">Last checked: 26 Apr 2026</div>
+          <div class="src">Last checked: <span class="demo-today">28 Apr 2026</span></div>
         </li>
         <li class="warn">
           <div class="t">⚠ Hezbollah opposition to appointment</div>
@@ -1292,8 +1304,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
     <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;flex-wrap:wrap">
       <div style="flex:1;min-width:280px">
         <div style="font-size:16px;font-weight:500">Intelligence Report: Council of Ministers</div>
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Period: 12 – 26 Apr 2026 · Focus: Decision-making analysis</div>
-        <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px;font-family:var(--mono)">Generated: 26 Apr 2026, 14:32 UTC</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Period: 12 – <span class="demo-today">28 Apr 2026</span> · Focus: Decision-making analysis</div>
+        <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px;font-family:var(--mono)">Generated: <span class="demo-today">28 Apr 2026</span>, 14:32 UTC</div>
       </div>
       <div style="text-align:right;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
         <span class="pill pill-pending">⏳ Pending review</span>
@@ -1409,8 +1421,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
     <div style="border-top:1px solid var(--border-subtle);padding-top:14px;margin-top:14px">
       <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Recent access</div>
       <div style="font-size:11.5px;color:var(--text-secondary);font-family:var(--mono);line-height:1.8">
-        26 Apr 2026 14:30 · 212.43.x.x · Lebanon · MacBook · Login<br>
-        26 Apr 2026 14:31 · 212.43.x.x · Lebanon · MacBook · Report generated<br>
+        <span class="demo-today">28 Apr 2026</span> 14:30 · 212.43.x.x · Lebanon · MacBook · Login<br>
+        <span class="demo-today">28 Apr 2026</span> 14:31 · 212.43.x.x · Lebanon · MacBook · Report generated<br>
         25 Apr 2026 09:15 · 212.43.x.x · Lebanon · MacBook · Login
       </div>
     </div>
@@ -1507,7 +1519,7 @@ function setHistorical(iso,label){
   datePill.style.color='var(--warning)';
 }
 function setLive(){
-  document.getElementById('date-label').textContent='26 Apr 2026';
+  document.getElementById('date-label').textContent=todayLabel();
   document.getElementById('hist-bar').classList.remove('on');
   document.getElementById('tabnav').classList.remove('with-bar');
   datePill.style.color='';
