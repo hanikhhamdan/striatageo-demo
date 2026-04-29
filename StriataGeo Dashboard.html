@@ -459,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function(){
         <div style="display:flex;justify-content:space-between"><span><span class="dot" style="background:var(--critical);margin-right:6px"></span>Hezbollah (party)</span><span class="sec" style="color:var(--text-secondary);font-family:var(--mono)">24%</span></div>
         <div style="display:flex;justify-content:space-between"><span><span class="dot" style="background:#5A6480;margin-right:6px"></span>Presidency</span><span style="color:var(--text-secondary);font-family:var(--mono)">18%</span></div>
         <div style="display:flex;justify-content:space-between"><span><span class="dot" style="background:#404A65;margin-right:6px"></span>Parliament</span><span style="color:var(--text-secondary);font-family:var(--mono)">14%</span></div>
-        <div style="display:flex;justify-content:space-between"><span><span class="dot" style="background:#323B53;margin-right:6px"></span>Lebanese Army (LAF)</span><span style="color:var(--text-secondary);font-family:var(--mono)">12%</span></div>
+        <div style="display:flex;justify-content:space-between"><span><span class="dot" style="background:#323B53;margin-right:6px"></span>Lebanese Armed Forces</span><span style="color:var(--text-secondary);font-family:var(--mono)">12%</span></div>
         <div style="display:flex;justify-content:space-between"><span><span class="dot" style="background:var(--neu);margin-right:6px"></span>All others</span><span style="color:var(--text-secondary);font-family:var(--mono)">32%</span></div>
       </div>
     </div>
@@ -512,8 +512,9 @@ document.addEventListener('DOMContentLoaded', function(){
         <div class="fpills" style="margin:10px 0 0">
           <button class="fpill active">All</button>
           <button class="fpill">Executive</button>
-          <button class="fpill">Security</button>
           <button class="fpill">Legislative</button>
+          <button class="fpill">Judicial</button>
+          <button class="fpill">Security</button>
           <button class="fpill">Financial</button>
         </div>
       </div>
@@ -546,18 +547,18 @@ document.addEventListener('DOMContentLoaded', function(){
         </div>
         <div class="lrow" data-inst="isf">
           <div class="ic">⬡</div>
-          <div class="body"><div class="nm">Internal Security Forces</div><div class="meta">Maj.Gen. Imad Osman · Sunni</div></div>
+          <div class="body"><div class="nm">Internal Security Forces</div><div class="meta">Maj.Gen. Raed Abdallah · Sunni</div></div>
           <div class="right"><span class="pill pill-stable">Stable</span><div style="margin-top:3px"><span class="dot dot-live"></span> Live</div></div>
         </div>
         <div class="lrow" data-inst="gs">
           <div class="ic">⬡</div>
-          <div class="body"><div class="nm">General Security</div><div class="meta">Maj.Gen. Elias Baissari · Shia</div></div>
+          <div class="body"><div class="nm">General Security</div><div class="meta">Maj.Gen. Hassan Choucair · Shia</div></div>
           <div class="right"><span class="pill pill-strained">Strained</span><div style="margin-top:3px">3h ago</div></div>
         </div>
         <div class="lrow" data-inst="ss">
           <div class="ic">⬡</div>
-          <div class="body"><div class="nm">State Security</div><div class="meta">Maj.Gen. Antoine Saliba · Maronite</div></div>
-          <div class="right"><span class="pill pill-stable">Stable</span><div style="margin-top:3px">5h ago</div></div>
+          <div class="body"><div class="nm">State Security</div><div class="meta">Brig.Gen. Edgar Lawandos · Greek Catholic</div></div>
+          <div class="right"><span class="pill pill-stable">Stable</span><div style="margin-top:3px">6h ago</div></div>
         </div>
       </div>
 
@@ -574,7 +575,7 @@ document.addEventListener('DOMContentLoaded', function(){
       <div>
         <div class="lrow" data-inst="bdl">
           <div class="ic">⬡</div>
-          <div class="body"><div class="nm">Banque du Liban</div><div class="meta">Karim Souaid (Gov.) · Sunni</div></div>
+          <div class="body"><div class="nm">Banque du Liban</div><div class="meta">Karim Souaid · Governor since Apr 2025</div></div>
           <div class="right"><span class="pill pill-critical">Critical</span><div style="margin-top:3px"><span class="dot dot-live"></span> Live</div></div>
         </div>
         <div class="lrow" data-inst="mof">
@@ -584,12 +585,17 @@ document.addEventListener('DOMContentLoaded', function(){
         </div>
       </div>
 
-      <div class="cat-label">Judiciary</div>
+      <div class="cat-label">Judicial</div>
       <div>
-        <div class="lrow" data-inst="jud">
+        <div class="lrow" data-inst="hjc">
           <div class="ic">⬡</div>
-          <div class="body"><div class="nm">Court of Cassation</div><div class="meta">Souheil Abboud (Pres.)</div></div>
-          <div class="right"><span class="pill pill-strained">Strained</span><div style="margin-top:3px">6h ago</div></div>
+          <div class="body"><div class="nm">Higher Judicial Council</div><div class="meta">Souheil Abboud · First President, Court of Cassation</div></div>
+          <div class="right"><span class="pill pill-strained">Strained</span><div style="margin-top:3px">12h ago</div></div>
+        </div>
+        <div class="lrow" data-inst="cc">
+          <div class="ic">⬡</div>
+          <div class="body"><div class="nm">Constitutional Council</div><div class="meta">10 members · 5 yr terms</div></div>
+          <div class="right"><span class="pill pill-stable">Stable</span><div style="margin-top:3px">2d ago</div></div>
         </div>
       </div>
     </aside>
@@ -634,19 +640,19 @@ document.addEventListener('DOMContentLoaded', function(){
             <div style="flex:4;background:#7B5BD0" title="LF · 4"></div>
             <div style="flex:2;background:#E89B22" title="FPM · 2"></div>
             <div style="flex:2;background:var(--critical)" title="Hezbollah · 2"></div>
-            <div style="flex:4;background:#22A38B" title="Amal · 4"></div>
+            <div style="flex:2;background:#22A38B" title="Amal · 2"></div>
             <div style="flex:1;background:#3478CC" title="PSP · 1"></div>
             <div style="flex:1;background:#9C5C5C" title="Kataeb · 1"></div>
-            <div style="flex:10;background:var(--neu)" title="Independents · 10"></div>
+            <div style="flex:12;background:var(--neu)" title="Independents · 12"></div>
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:14px;font-size:11px;color:var(--text-secondary)">
             <span><i style="display:inline-block;width:9px;height:9px;background:#7B5BD0;margin-right:5px"></i>Lebanese Forces · 4</span>
             <span><i style="display:inline-block;width:9px;height:9px;background:#E89B22;margin-right:5px"></i>FPM · 2</span>
             <span><i style="display:inline-block;width:9px;height:9px;background:var(--critical);margin-right:5px"></i>Hezbollah · 2</span>
-            <span><i style="display:inline-block;width:9px;height:9px;background:#22A38B;margin-right:5px"></i>Amal · 4</span>
+            <span><i style="display:inline-block;width:9px;height:9px;background:#22A38B;margin-right:5px"></i>Amal · 2</span>
             <span><i style="display:inline-block;width:9px;height:9px;background:#3478CC;margin-right:5px"></i>PSP · 1</span>
             <span><i style="display:inline-block;width:9px;height:9px;background:#9C5C5C;margin-right:5px"></i>Kataeb · 1</span>
-            <span><i style="display:inline-block;width:9px;height:9px;background:var(--neu);margin-right:5px"></i>Independents · 10</span>
+            <span><i style="display:inline-block;width:9px;height:9px;background:var(--neu);margin-right:5px"></i>Independents · 12</span>
           </div>
         </div>
 
@@ -663,7 +669,7 @@ document.addEventListener('DOMContentLoaded', function(){
             </div>
             <div class="def-row">
               <dt>Real decision authority</dt>
-              <dd>Coalition-negotiated. Hezbollah retains 2 portfolios (Health, Labour); Amal 4 portfolios incl. Finance, Public Works, Sports/Youth, Telecoms.</dd>
+              <dd>Coalition-negotiated. Hezbollah retains 2 portfolios (Health, Labour); Amal 2 portfolios (Finance, Public Works).</dd>
             </div>
             <div class="def-row">
               <dt>Veto actors</dt>
@@ -993,7 +999,7 @@ document.addEventListener('DOMContentLoaded', function(){
       <div style="border-top:1px solid var(--border-subtle);margin:14px -16px 10px"></div>
       <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">AI network summary <span class="pill pill-pending" style="margin-left:6px">⏳ Pending</span></div>
       <div style="font-size:12px;color:var(--text-secondary);line-height:1.65;font-style:italic">
-        "Hezbollah operates as the dominant non-state node in Lebanon's power network, maintaining direct command relationship with Iran's IRGC-Quds Force while holding 2 government portfolios and exercising informal veto power over security policy."
+        "Hezbollah operates as the dominant non-state node in Lebanon's power network, maintaining direct command relationship with Iran's IRGC-Quds Force while holding 2 cabinet portfolios and exercising informal veto power over security policy."
       </div>
       <a href="#" style="display:inline-block;margin-top:12px;font-size:12px">View full profile →</a>
     </aside>
@@ -1102,7 +1108,7 @@ document.addEventListener('DOMContentLoaded', function(){
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;font-size:11.5px">
         <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Parl. seats</div><div style="font-size:14px;font-weight:500;margin-top:2px">14</div></div>
-        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Cabinet portf.</div><div style="font-size:14px;font-weight:500;margin-top:2px">4</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Cabinet portf.</div><div style="font-size:14px;font-weight:500;margin-top:2px">2</div></div>
         <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Sentiment 7d</div><div style="font-size:14px;font-weight:500;margin-top:2px;color:var(--critical)">−8</div></div>
       </div>
       <div class="sb" style="margin-top:10px"><div class="neg" style="flex:38"></div><div class="ne" style="flex:32"></div><div class="pos" style="flex:30"></div></div>
@@ -1322,7 +1328,7 @@ document.addEventListener('DOMContentLoaded', function(){
         <li><span style="color:var(--text-primary)">Hezbollah's portfolio ministers (Health: Nasredine, Labour: Haidar) effectively blocked two proposed reform decrees by absenting from quorum on 18 and 22 April.</span></li>
         <li><span style="color:var(--text-primary)">PM Salam's reform agenda faces structural resistance from Speaker Berri's calendar control over Parliament.</span></li>
         <li><span style="color:var(--text-primary)">Foreign pressure from USA and France visible in three coordinated démarches recorded between 14 and 24 April.</span></li>
-        <li><span style="color:var(--text-primary)">Independents holding 10 portfolios show low coordination — voted as one bloc on only 1 of 4 contested decrees.</span></li>
+        <li><span style="color:var(--text-primary)">Independents holding 12 portfolios show low coordination — voted as one bloc on only 1 of 4 contested decrees.</span></li>
       </ol>
 
       <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -1401,7 +1407,7 @@ document.addEventListener('DOMContentLoaded', function(){
       <div class="initials lg">M.R.</div>
       <div>
         <div style="font-size:16px;font-weight:500">Mohammed Rashid</div>
-        <div style="font-size:12px;color:var(--text-secondary)">Political Analyst · Embassy of [Country] · Beirut</div>
+        <div style="font-size:12px;color:var(--text-secondary)">Political Analyst · Diplomatic Mission · Beirut</div>
         <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px;font-family:var(--mono)">🔒 Subscription: Lebanon · Annual · Expires 31 Dec 2026</div>
       </div>
     </div>
