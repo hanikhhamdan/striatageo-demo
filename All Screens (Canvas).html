@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>StriataGeo — Strategic Intelligence Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Arabic:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css"/>
+<style>
+  body { margin: 0; background: #f0eee9; font-family: 'Inter', sans-serif; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#0A0C10"/>
+    <g transform="translate(100,100)" stroke="#1AA882" fill="none" stroke-width="2">
+      <polygon points="0,-40 35,-20 35,20 0,40 -35,20 -35,-20"/>
+      <polygon points="0,-26 22,-13 22,13 0,26 -22,13 -22,-13"/>
+      <polygon points="0,-12 10,-6 10,6 0,12 -10,6 -10,-6"/>
+    </g>
+  </svg>
+</template>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="screens/login.jsx"></script>
+<script type="text/babel" src="screens/overview.jsx"></script>
+<script type="text/babel" src="screens/institutions.jsx"></script>
+<script type="text/babel" src="screens/people.jsx"></script>
+<script type="text/babel" src="screens/network.jsx"></script>
+<script type="text/babel" src="screens/economics.jsx"></script>
+<script type="text/babel" src="screens/reports.jsx"></script>
+<script type="text/babel" src="screens/account.jsx"></script>
+<script type="text/babel" src="screens/sources.jsx"></script>
+
+<script type="text/babel">
+const APP_W = 1280;
+const APP_H = 820;
+
+const drawerDemo = {
+  mode: 'assessment',
+  title: 'Coordinated campaign — Hezbollah',
+  assessment: 'Telegram volume on Hezbollah-affiliated channels reached 4.2× the trailing seven-day baseline across 14 monitored channels in the past 6 hours. Posting cadence shows synchronisation patterns consistent with coordinated narrative push, not organic response.',
+  sources: [
+    { name: 'GDELT',                excerpt: 'Telegram event volume +318% versus 7-day mean across Hezbollah-tagged channels.', updated: '6 min ago' },
+    { name: 'Reuters Arabic',       excerpt: 'Synchronised statements appearing across multiple Hezbollah-aligned outlets within a 40-minute window.', updated: '14 min ago' },
+    { name: 'Al-Manar',             excerpt: 'Editorial line emphasising regional resistance framing in lead segment.', updated: '22 min ago' },
+    { name: 'NBN',                  excerpt: 'Amal-aligned coverage echoing main themes within 1 h, indicating coordinated repost.', updated: '31 min ago' },
+    { name: 'BBC Arabic',           excerpt: 'Independent monitoring confirms volume spike but flags possible bot-amplified component.', updated: '47 min ago' },
+    { name: 'Carnegie Middle East', excerpt: 'Pattern matches November 2024 coordinated media push around prior security event.', updated: '1 h 28 min ago' },
+  ],
+  claims: [
+    { text: 'Telegram volume across 14 Hezbollah-tagged channels reached +318% over the trailing 7-day baseline.', support: ['GDELT', 'Reuters Arabic', 'BBC Arabic'] },
+    { text: 'Posting cadence within a 40-minute window across 3 affiliated outlets indicates coordination, not organic response.', support: ['Reuters Arabic', 'Al-Manar', 'NBN'] },
+    { text: 'Pattern matches the November 2024 coordinated push around the prior security event.', support: ['Carnegie Middle East', 'BBC Arabic'] },
+  ],
+};
+
+const App = () => (
+  <DesignCanvas>
+    <DCSection id="auth" title="Authentication" subtitle="Login flow + security states">
+      <DCArtboard id="login-default" label="01 · Login" width={APP_W} height={APP_H}>
+        <LoginScreen variant="default"/>
+      </DCArtboard>
+      <DCArtboard id="login-mfa" label="02 · MFA" width={APP_W} height={APP_H}>
+        <LoginScreen variant="mfa"/>
+      </DCArtboard>
+      <DCArtboard id="login-mfa-newdevice" label="03 · MFA · New device" width={APP_W} height={APP_H}>
+        <LoginScreen variant="newdevice"/>
+      </DCArtboard>
+      <DCArtboard id="login-lockout" label="04 · Account suspended" width={APP_W} height={APP_H}>
+        <LoginScreen variant="lockout"/>
+      </DCArtboard>
+      <DCArtboard id="login-unknowncountry" label="05 · Unknown country anomaly" width={APP_W} height={APP_H}>
+        <LoginScreen variant="unknowncountry"/>
+      </DCArtboard>
+      <DCArtboard id="login-unregistered" label="06 · Unregistered device" width={APP_W} height={APP_H}>
+        <LoginScreen variant="unregistered"/>
+      </DCArtboard>
+    </DCSection>
+
+    <DCSection id="dashboard" title="Dashboard" subtitle="Operational tabs · Lebanon · 28 Apr 2026">
+      <DCArtboard id="overview" label="07 · Overview" width={APP_W} height={APP_H}>
+        <OverviewScreen/>
+      </DCArtboard>
+      <DCArtboard id="overview-evidence-drawer" label="07b · Overview · evidence drawer" width={APP_W} height={APP_H}>
+        <OverviewScreen _canvasDrawer={drawerDemo}/>
+      </DCArtboard>
+      <DCArtboard id="overview-dropdowns" label="08 · Overview · open dropdowns" width={APP_W} height={APP_H}>
+        <OverviewScreen dropdownOpen="subject"/>
+      </DCArtboard>
+      <DCArtboard id="overview-historical" label="09 · Historical mode (14 Mar 2026)" width={APP_W} height={APP_H}>
+        <OverviewScreen historical={true}/>
+      </DCArtboard>
+      <DCArtboard id="institutions" label="10 · Institutions · Council of Ministers" width={APP_W} height={APP_H}>
+        <InstitutionsScreen/>
+      </DCArtboard>
+      <DCArtboard id="people" label="11 · People · Nawaf Salam · Record" width={APP_W} height={APP_H}>
+        <PeopleScreen/>
+      </DCArtboard>
+      <DCArtboard id="network" label="12 · Network graph · Hezbollah selected" width={APP_W} height={APP_H}>
+        <NetworkScreen/>
+      </DCArtboard>
+      <DCArtboard id="economics-macro" label="13 · Economics · Macro" width={APP_W} height={APP_H}>
+        <EconomicsScreen tab="macro"/>
+      </DCArtboard>
+      <DCArtboard id="economics-reform" label="14 · Economics · Reform Tracker" width={APP_W} height={APP_H}>
+        <EconomicsScreen tab="reform"/>
+      </DCArtboard>
+      <DCArtboard id="reports-loading" label="15 · Reports · Generating" width={APP_W} height={APP_H}>
+        <ReportsScreen state="loading"/>
+      </DCArtboard>
+      <DCArtboard id="reports-generated" label="16 · Reports · Generated" width={APP_W} height={APP_H}>
+        <ReportsScreen state="generated"/>
+      </DCArtboard>
+      <DCArtboard id="account" label="17 · Personal account" width={APP_W} height={APP_H}>
+        <AccountScreen/>
+      </DCArtboard>
+      <DCArtboard id="sources" label="18 · Sources & Methodology" width={APP_W} height={APP_H}>
+        <SourcesScreen/>
+      </DCArtboard>
+    </DCSection>
+  </DesignCanvas>
+);
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

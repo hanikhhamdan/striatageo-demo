@@ -1,0 +1,1683 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StriataGeo Dashboard — Lebanon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Noto+Sans+Arabic:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#0A0C10; --surface:#111520; --surface-raised:#181E2E;
+  --border:#232B3D; --border-subtle:#1A2030;
+  --text-primary:#E4E7F0; --text-secondary:#7E8699; --text-tertiary:#3E4560;
+  --teal:#1AA882; --teal-dim:#0F6E56;
+  --teal-15:rgba(26,168,130,.15); --teal-08:rgba(26,168,130,.08);
+  --critical:#E03E3E; --warning:#E89B22; --info:#3478CC;
+  --critical-15:rgba(224,62,62,.15); --warning-15:rgba(232,155,34,.15); --info-15:rgba(52,120,204,.15);
+  --pos:#1AA882; --neu:#283040; --neg:#C84E24; --hostile:#9A2222;
+  --pending:#8B6914; --pending-15:rgba(139,105,20,.15);
+  --mono:'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--canvas);color:var(--text-primary);font-family:'Inter',sans-serif;font-size:13px;font-weight:400;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--teal);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:var(--canvas)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* TOPBAR */
+.topbar{height:48px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;position:sticky;top:0;z-index:50}
+.tb-brand{display:flex;align-items:center;gap:8px;color:var(--teal);font-weight:500;font-size:15px;letter-spacing:.01em}
+.tb-brand svg{width:20px;height:20px}
+.tb-pill{display:inline-flex;align-items:center;gap:6px;background:var(--surface-raised);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:13px;font-weight:500;color:var(--text-primary);cursor:pointer}
+.tb-pill:hover{border-color:var(--teal-dim)}
+.tb-pill .caret{font-size:9px;color:var(--text-secondary)}
+.tb-spacer{flex:1}
+.tb-lang{display:inline-flex;background:var(--surface-raised);border:1px solid var(--border);border-radius:4px;font-size:11px;font-weight:500;letter-spacing:.06em;overflow:hidden}
+.tb-lang span{padding:5px 10px;color:var(--text-secondary);cursor:pointer}
+.tb-lang span.active{background:var(--teal-15);color:var(--teal)}
+.tb-user{width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;cursor:pointer;letter-spacing:.02em}
+.historical-bar{display:none;align-items:center;gap:12px;padding:10px 20px;background:rgba(232,155,34,.12);border-bottom:1px solid var(--warning);border-left:2px solid var(--warning);font-size:12px;color:var(--warning)}
+.historical-bar.on{display:flex}
+.historical-bar .ret{margin-left:auto;color:var(--warning);cursor:pointer;font-weight:500}
+
+/* TABS */
+.tabnav{height:40px;background:var(--canvas);border-bottom:1px solid var(--border);display:flex;padding:0 20px;align-items:flex-end;gap:0;overflow-x:auto;position:sticky;top:48px;z-index:49}
+.tabnav.with-bar{top:88px}
+.tab{padding:0 16px;height:40px;display:inline-flex;align-items:center;font-size:13px;color:var(--text-secondary);font-weight:400;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;letter-spacing:.01em}
+.tab:hover{color:var(--text-primary)}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal);background:var(--teal-08);font-weight:500}
+
+/* CONTENT */
+.content{padding:20px;max-width:1400px;margin:0 auto}
+.tabpanel{display:none}
+.tabpanel.active{display:block;animation:fade .15s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+/* PANELS */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;position:relative}
+.panel-raised{background:var(--surface-raised)}
+.panel-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.panel-title{font-size:15px;font-weight:500;color:var(--text-primary)}
+.panel-sub{font-size:11px;color:var(--text-tertiary);margin-left:auto;display:flex;align-items:center;gap:6px}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dot-live{background:var(--teal);box-shadow:0 0 0 0 var(--teal);animation:pulse 2s infinite}
+.dot-static{background:var(--text-tertiary)}
+.dot-stale{background:var(--warning)}
+.dot-critical{background:var(--critical);animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 currentColor}70%{box-shadow:0 0 0 6px transparent}100%{box-shadow:0 0 0 0 transparent}}
+
+/* INFO TOOLTIP */
+.info{position:relative;display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;border:1px solid var(--text-tertiary);color:var(--text-secondary);font-size:9px;font-style:italic;cursor:help;flex-shrink:0;font-family:'Inter';user-select:none;line-height:1}
+.info::before{content:"i"}
+.info:hover,.info[data-open="true"]{border-color:var(--teal);color:var(--teal);background:var(--teal-15)}
+.info-tip{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(-2px);width:280px;background:var(--surface-raised);border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-size:11.5px;color:var(--text-secondary);line-height:1.5;text-align:left;z-index:200;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;font-style:normal;font-weight:400}
+.info-tip strong{color:var(--text-primary);font-weight:500}
+.info:hover .info-tip,.info[data-open="true"] .info-tip{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.info.tip-left .info-tip{left:auto;right:-6px;transform:translateX(0) translateY(-2px)}
+.info.tip-left:hover .info-tip,.info.tip-left[data-open="true"] .info-tip{transform:translateX(0) translateY(0)}
+
+/* PILLS / BADGES */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;font-size:11px;border-radius:2px;font-weight:500;letter-spacing:.02em;line-height:1.5}
+.pill-stable{color:var(--teal);background:var(--teal-15)}
+.pill-strained{color:var(--warning);background:var(--warning-15)}
+.pill-critical{color:var(--critical);background:var(--critical-15)}
+.pill-info{color:var(--info);background:var(--info-15)}
+.pill-pending{color:var(--pending);background:var(--pending-15)}
+.pill-verified{color:var(--teal);background:var(--teal-15)}
+.pill-disputed{color:var(--critical);background:var(--critical-15)}
+.pill-tier1{color:var(--teal);background:var(--teal-15)}
+.pill-tier2{color:var(--warning);background:var(--warning-15)}
+.pill-tier3{color:var(--text-secondary);background:var(--surface-raised);border:1px solid var(--border)}
+.pill-flag{padding:2px 6px;font-size:10px;letter-spacing:.04em;background:var(--surface-raised);border:1px solid var(--border);color:var(--text-secondary);font-family:var(--mono)}
+.pill-aff-actor{color:var(--critical);background:var(--critical-15)}
+.pill-aff-state{color:var(--text-secondary);background:var(--surface-raised);border:1px solid var(--border)}
+.pill-aff-foreign{color:var(--warning);background:var(--warning-15)}
+.pill-aff-ind{color:var(--text-secondary);background:transparent;border:1px solid var(--border-subtle)}
+
+/* TREND ARROWS */
+.trend-up{color:var(--teal)}
+.trend-down{color:var(--critical)}
+.trend-flat{color:var(--text-secondary)}
+
+/* GRIDS */
+.grid{display:grid;gap:12px}
+.g-4{grid-template-columns:repeat(4,1fr)}
+.g-3{grid-template-columns:repeat(3,1fr)}
+.g-2{grid-template-columns:repeat(2,1fr)}
+.g-58-42{grid-template-columns:58fr 42fr}
+.g-260{grid-template-columns:260px 1fr}
+.g-220-1-280{grid-template-columns:220px 1fr 280px}
+
+/* METRIC CARDS */
+.metric{padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;min-height:80px;display:flex;flex-direction:column;justify-content:center;position:relative}
+.metric .num{font-size:28px;font-weight:500;color:var(--text-primary);line-height:1;letter-spacing:-.02em}
+.metric .num.crit{color:var(--critical)}
+.metric .num.teal{color:var(--teal);font-size:18px}
+.metric .lab{font-size:12px;color:var(--text-secondary);margin-top:6px}
+.metric .icn{position:absolute;top:14px;right:14px;color:var(--teal)}
+.metric .info{position:absolute;top:14px;right:14px}
+.metric.has-info .icn{right:36px}
+
+/* STAB BAR */
+.stab-row{display:grid;grid-template-columns:140px 1fr 80px 24px;gap:10px;align-items:center;padding:7px 0;font-size:12px}
+.stab-row .lab{color:var(--text-primary)}
+.stab-row .bar{height:6px;background:var(--border);border-radius:0;overflow:hidden;position:relative}
+.stab-row .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--teal)}
+.stab-row .bar i.warn{background:var(--warning)}
+.stab-row .bar i.crit{background:var(--critical)}
+
+/* ALERTS */
+.alert{padding:10px 12px 10px 14px;background:var(--surface-raised);border-radius:4px;border-left:3px solid var(--critical);margin-bottom:10px;position:relative}
+.alert.warn{border-left-color:var(--warning)}
+.alert.note{border-left-color:var(--info)}
+.alert .t{font-size:13px;font-weight:500;color:var(--text-primary);display:flex;align-items:center;gap:8px}
+.alert .b{font-size:12px;color:var(--text-secondary);margin:4px 0 6px}
+.alert .m{font-size:11px;color:var(--text-tertiary);display:flex;gap:8px;align-items:center}
+.alert .m a{color:var(--teal)}
+
+/* SENT BAR */
+.sb{position:relative;height:6px;background:var(--neu);border-radius:0;overflow:hidden;display:flex}
+.sb .pos{background:var(--pos)}.sb .neg{background:var(--neg)}.sb .ne{background:var(--neu)}.sb .h{background:var(--hostile)}
+
+/* BUTTON */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;background:var(--teal);color:#fff;border-radius:4px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:background .15s}
+.btn:hover{background:var(--teal-dim)}
+.btn-block{width:100%}
+.btn-ghost{background:transparent;color:var(--text-primary);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--teal);background:transparent}
+
+/* FORM */
+.sel,.inp{width:100%;background:var(--surface-raised);border:1px solid var(--border);border-radius:4px;padding:10px 12px;color:var(--text-primary);font-size:13px;font-family:inherit;outline:none}
+.sel:focus,.inp:focus{border-color:var(--teal)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);padding:10px 12px;text-align:left;background:var(--surface-raised);border-bottom:1px solid var(--border)}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border-subtle);vertical-align:middle;color:var(--text-primary)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover{background:var(--surface-raised)}
+.tbl .sec{color:var(--text-secondary)}
+
+/* SUB TABS */
+.subtabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto}
+.subtab{padding:10px 14px;font-size:12px;color:var(--text-secondary);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;letter-spacing:.02em}
+.subtab:hover{color:var(--text-primary)}
+.subtab.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:500}
+
+/* LIST ROWS */
+.lrow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:4px;cursor:pointer;border:1px solid transparent;border-left:2px solid transparent}
+.lrow:hover{background:var(--surface-raised)}
+.lrow.active{background:var(--surface-raised);border-left-color:var(--teal)}
+.lrow .ic{width:28px;height:28px;border-radius:4px;background:var(--canvas);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--teal);flex-shrink:0;font-size:10px}
+.lrow .body{flex:1;min-width:0}
+.lrow .nm{font-size:12.5px;color:var(--text-primary);font-weight:500}
+.lrow .meta{font-size:11px;color:var(--text-secondary);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lrow .right{text-align:right;flex-shrink:0;font-size:10px;color:var(--text-tertiary)}
+
+/* CATEGORY LABEL */
+.cat-label{font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.1em;padding:14px 12px 6px;font-weight:500}
+
+/* INITIALS */
+.initials{width:40px;height:40px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0;letter-spacing:.02em}
+.initials.sm{width:28px;height:28px;font-size:11px}
+.initials.lg{width:48px;height:48px;font-size:16px}
+
+/* KPI CARD */
+.kpi{padding:12px 14px;background:var(--surface-raised);border:1px solid var(--border);border-radius:8px}
+.kpi .lab{font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.kpi .v{font-size:15px;font-weight:500;color:var(--text-primary)}
+.kpi .s{font-size:11px;color:var(--text-tertiary);margin-top:4px}
+
+/* DEFINITION ROW */
+.def-row{display:grid;grid-template-columns:180px 1fr;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-subtle);font-size:12.5px}
+.def-row:last-child{border-bottom:none}
+.def-row dt{color:var(--text-secondary)}
+.def-row dd{color:var(--text-primary);margin:0}
+
+/* NETWORK */
+.net-svg{width:100%;height:560px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.net-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:11px;color:var(--text-secondary)}
+.net-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+
+/* SENT MULTI */
+.cm-row{display:grid;grid-template-columns:90px 1fr 38px;gap:8px;align-items:center;padding:5px 0;font-size:12px}
+.cm-row .lab{color:var(--text-primary)}
+.cm-row .net{font-size:12px;font-weight:500;text-align:right;font-family:var(--mono)}
+
+/* FILTER PILLS */
+.fpills{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.fpill{font-size:11px;padding:5px 10px;border:1px solid var(--border);border-radius:4px;color:var(--text-secondary);background:var(--surface);cursor:pointer}
+.fpill:hover{border-color:var(--teal-dim);color:var(--text-primary)}
+.fpill.active{background:var(--teal-15);border-color:var(--teal);color:var(--teal)}
+
+/* EVIDENCE */
+.evidence{margin-top:14px;padding:10px 12px;background:var(--surface-raised);border:1px solid var(--border-subtle);border-radius:4px;font-size:11.5px;color:var(--text-tertiary);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.evidence strong{color:var(--text-secondary);font-weight:500}
+.evidence a{color:var(--teal)}
+.evidence .arr{color:var(--text-tertiary)}
+
+/* GRAPH SPARKLINE */
+.spark{display:inline-block;vertical-align:middle}
+
+/* HEADER PROFILE */
+.profile-head{display:flex;align-items:center;gap:14px;padding:16px;background:var(--surface-raised);border:1px solid var(--border);border-radius:8px;margin-bottom:14px}
+.profile-head .body{flex:1}
+.profile-head .nm{font-size:18px;font-weight:500;color:var(--text-primary)}
+.profile-head .ar{font-size:13px;color:var(--text-secondary);font-family:'Noto Sans Arabic';direction:rtl}
+.profile-head .meta{font-size:12px;color:var(--text-secondary);margin-top:6px}
+.profile-head .right{text-align:right;display:flex;flex-direction:column;gap:4px;align-items:flex-end;font-size:11px;color:var(--text-tertiary)}
+
+/* RECORD ROWS */
+.rec-list{padding:0;margin:0;list-style:none}
+.rec-list li{padding:10px 12px;border-left:2px solid var(--teal);background:var(--surface-raised);margin-bottom:8px;font-size:12px;color:var(--text-secondary);border-radius:0 4px 4px 0}
+.rec-list li.warn{border-left-color:var(--warning)}
+.rec-list li .t{color:var(--text-primary);font-weight:500;font-size:12.5px;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.rec-list li .src{font-size:11px;color:var(--text-tertiary);font-family:var(--mono);margin-top:4px}
+
+/* SCORE BAR */
+.scorebar{display:inline-block;width:60px;height:4px;background:var(--border);border-radius:2px;margin-left:8px;vertical-align:middle;position:relative;overflow:hidden}
+.scorebar i{position:absolute;inset:0 auto 0 0;background:var(--teal)}
+.scorebar i.med{background:var(--warning)}.scorebar i.low{background:var(--critical)}
+
+/* MODAL */
+.modal-back{position:fixed;inset:0;background:rgba(10,12,16,.85);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-back.on{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:8px;width:100%;max-width:480px;padding:24px;position:relative}
+.modal h3{margin:0 0 6px;font-weight:500;font-size:15px}
+.modal p{margin:0 0 14px;color:var(--text-secondary);font-size:12.5px}
+.modal-x{position:absolute;top:14px;right:14px;color:var(--text-secondary);cursor:pointer;font-size:18px;line-height:1}
+
+/* DATE PICKER POPOVER */
+.pop{position:absolute;top:calc(100% + 6px);left:0;background:var(--surface-raised);border:1px solid var(--border);border-radius:8px;padding:14px;z-index:100;display:none;min-width:240px}
+.pop.on{display:block}
+.pop label{display:block;font-size:11px;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
+.dp-wrap{position:relative}
+.preset{font-size:12px;color:var(--text-secondary);padding:6px 8px;border-radius:4px;cursor:pointer;display:block}
+.preset:hover{background:var(--surface);color:var(--text-primary)}
+
+/* SOURCES TABLE */
+.lang-pill{display:inline-block;font-size:10px;padding:1px 6px;border-radius:2px;background:var(--surface-raised);color:var(--text-secondary);border:1px solid var(--border-subtle);font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em}
+.score-cell{font-family:var(--mono);font-size:12px;color:var(--text-primary);white-space:nowrap}
+
+/* HOSTILE SENT */
+.toneseg{flex:1;height:100%}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <a href="#" class="tb-brand" onclick="goTab('overview');return false">
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <polygon points="32,4 58,18 58,46 32,60 6,46 6,18" fill="none" stroke="#1AA882" stroke-width="3"/>
+      <polygon points="32,14 49,23 49,41 32,50 15,41 15,23" fill="none" stroke="#1AA882" stroke-width="2"/>
+      <polygon points="32,22 41,27 41,37 32,42 23,37 23,27" fill="none" stroke="#1AA882" stroke-width="1.5"/>
+      <circle cx="32" cy="32" r="2.4" fill="#1AA882"/>
+    </svg>
+    <span>StriataGeo</span>
+  </a>
+
+  <button class="tb-pill" id="country-pill">Lebanon <span class="caret">▾</span></button>
+
+  <div class="dp-wrap">
+    <button class="tb-pill" id="date-pill">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+        <rect x="2" y="3" width="12" height="11" rx="1"/><path d="M2 6h12M5 1v3M11 1v3"/>
+      </svg>
+      <span id="date-label">26 Apr 2026</span> <span class="caret">▾</span>
+    </button>
+    <div class="pop" id="date-pop">
+      <label>Quick select</label>
+      <div class="preset" data-d="live">Live (today)</div>
+      <div class="preset" data-d="2026-04-14">14 Apr 2026 — Cabinet vote</div>
+      <div class="preset" data-d="2026-03-14">14 Mar 2026 — March 14 anniversary</div>
+      <div class="preset" data-d="2026-02-08">8 Feb 2026 — Govt formed</div>
+      <div class="preset" data-d="2026-01-09">9 Jan 2026 — Aoun elected</div>
+      <div class="preset" data-d="2025-11-27">27 Nov 2025 — Ceasefire</div>
+    </div>
+  </div>
+
+  <span class="tb-spacer"></span>
+
+  <span class="tb-lang">
+    <span class="active">EN</span><span>AR</span>
+  </span>
+
+  <div class="tb-user" id="user-btn" title="Mohammed Rashid">M.R.</div>
+</header>
+
+<!-- HISTORICAL BAR -->
+<div class="historical-bar" id="hist-bar">
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+    <circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 1.5"/>
+  </svg>
+  <span>Viewing historical data — <span id="hist-date">14 Mar 2026</span> · All data reflects this date</span>
+  <span class="ret" onclick="setLive()">Return to live →</span>
+</div>
+
+<!-- TAB NAV -->
+<nav class="tabnav" id="tabnav">
+  <div class="tab active" data-tab="overview">Overview</div>
+  <div class="tab" data-tab="institutions">Institutions</div>
+  <div class="tab" data-tab="people">People</div>
+  <div class="tab" data-tab="network">Network</div>
+  <div class="tab" data-tab="economics">Economics</div>
+  <div class="tab" data-tab="parties">Parties</div>
+  <div class="tab" data-tab="communities">Communities</div>
+  <div class="tab" data-tab="regional">Regional</div>
+  <div class="tab" data-tab="reports">Reports</div>
+  <div class="tab" data-tab="sources">Sources</div>
+</nav>
+
+<main class="content">
+
+<!-- ============== OVERVIEW ============== -->
+<section class="tabpanel active" id="tab-overview">
+
+  <div class="grid g-4" style="margin-bottom:12px">
+    <div class="metric has-info">
+      <div class="num">31</div>
+      <div class="lab">Institutions tracked · Lebanon</div>
+      <span class="info" data-tip="<strong>Institutions tracked.</strong> Presidency, Council of Ministers, Parliament, four security services (LAF, ISF, General Security, State Security), the judiciary, Banque du Liban, and 20 ministries. All Phase 1 (Lebanon)."></span>
+    </div>
+    <div class="metric has-info">
+      <div class="num">284</div>
+      <div class="lab">Individuals profiled</div>
+      <span class="info" data-tip="<strong>People dataset.</strong> Profiled individuals include current and former occupants of institutional positions, party leaders, and documented foreign-influence vectors. Each profile is sourced from public records only."></span>
+    </div>
+    <div class="metric has-info">
+      <div class="num crit">3</div>
+      <div class="lab"><span class="dot dot-critical" style="margin-right:4px"></span>Live alerts · active now</div>
+      <span class="info" data-tip="<strong>Live alerts.</strong> Triggered by anomaly detectors over the last 24 hours: coordinated narrative campaigns, sentiment shifts &gt; 15 points / 4 hours, and network signals from named-entity event chains."></span>
+    </div>
+    <div class="metric has-info">
+      <div class="num teal"><span class="dot dot-live" style="margin-right:6px"></span>Live</div>
+      <div class="lab">Updated 2 min ago</div>
+      <span class="info" data-tip="<strong>Data freshness.</strong> Green = updated within 2 minutes (most metrics). Gray dot with timestamp = scheduled refresh. Amber = past 24 h ceiling, marked stale on the source panel."></span>
+    </div>
+  </div>
+
+  <div class="grid g-58-42" style="margin-bottom:12px">
+    <!-- Institutional stability -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Institutional stability</div>
+        <span class="info" data-tip="<strong>Stability scoring.</strong> Composite of (a) head turnover frequency, (b) decision-output rate, (c) sentiment toward institution, (d) foreign-pressure signal. Updated 6× daily. Categories: Stable / Strained / Critical."></span>
+        <div class="panel-sub"><span class="dot dot-live"></span>Live</div>
+      </div>
+      <div>
+        <div class="stab-row"><div class="lab">Executive</div><div class="bar"><i style="width:88%"></i></div><span class="pill pill-stable">Stable</span><span class="trend-flat">↔</span></div>
+        <div class="stab-row"><div class="lab">Legislative</div><div class="bar"><i class="warn" style="width:64%"></i></div><span class="pill pill-strained">Strained</span><span class="trend-down">↓</span></div>
+        <div class="stab-row"><div class="lab">Security apparatus</div><div class="bar"><i style="width:90%"></i></div><span class="pill pill-stable">Stable</span><span class="trend-up">↑</span></div>
+        <div class="stab-row"><div class="lab">Financial system</div><div class="bar"><i class="crit" style="width:34%"></i></div><span class="pill pill-critical">Critical</span><span class="trend-down">↓</span></div>
+      </div>
+      <div style="border-top:1px solid var(--border-subtle);margin-top:14px;padding-top:12px">
+        <div style="font-size:11px;color:var(--warning);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+          <span class="pill pill-pending">⏳ Pending review</span>
+          <span style="color:var(--text-tertiary)">AI assessment · 26 Apr 2026 · 14:18 UTC</span>
+        </div>
+        <p style="font-size:12px;color:var(--text-secondary);line-height:1.6;margin:0">
+          The Salam government completed its first 80 days with a partial constitutional functioning: cabinet sessions occur on schedule, but no major reform decree has cleared cabinet since the bank-secrecy amendment. Parliament's reform committee remains stalled on the banking-resolution framework. Banking-sector stability deteriorates as the gap between official Sayrafa rate and parallel market widens. LAF deployment in the south continues without incident under the November 2025 ceasefire.
+        </p>
+        <div class="evidence">
+          <strong>Evidence:</strong>
+          <a href="#">Raw sources (412)</a><span class="arr">→</span>
+          <a href="#">Processed analysis</a><span class="arr">→</span>
+          <a href="#">This assessment</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live alerts + report gen -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Live alerts</div>
+        <span class="info" data-tip="<strong>Alert taxonomy.</strong> Red = high-confidence anomaly, immediate. Amber = developing, medium confidence. Blue = background signal, low confidence. Each alert links to its evidence chain and the raw items that triggered detection."></span>
+        <span class="pill pill-critical" style="margin-left:auto">3 active</span>
+      </div>
+
+      <div class="alert">
+        <div class="t"><span class="dot dot-critical"></span>Coordinated campaign — Hezbollah</div>
+        <div class="b">Telegram volume 4.2× seven-day baseline. Synchronised posting across 6 affiliated channels.</div>
+        <div class="m"><span>6 min ago</span> · <span class="pill pill-tier1">High confidence</span> · <a href="#">Evidence →</a></div>
+      </div>
+      <div class="alert warn">
+        <div class="t"><span class="dot" style="background:var(--warning)"></span>Sentiment shift — Ministry of Finance</div>
+        <div class="b">Public tone dropped 18 pts in 4 hours after Yassine Jaber statements on bank deposit haircut.</div>
+        <div class="m"><span>1 hr ago</span> · <span class="pill pill-tier2">Medium confidence</span> · <a href="#">Evidence →</a></div>
+      </div>
+      <div class="alert note">
+        <div class="t"><span class="dot" style="background:var(--info)"></span>Network signal — Joseph Aoun / Nawaf Salam</div>
+        <div class="b">Joint statement language analysis: closer alignment than 14 prior joint statements.</div>
+        <div class="m"><span>3 hr ago</span> · <span class="pill pill-tier3">Low confidence</span> · <a href="#">Evidence →</a></div>
+      </div>
+
+      <div style="border-top:1px solid var(--border-subtle);margin:14px -16px 12px;padding:14px 16px 0">
+        <div style="font-size:13px;font-weight:500;color:var(--text-primary);display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          Generate intelligence report
+          <span class="info" data-tip="<strong>On-demand reports.</strong> Subject + period + focus produces a structured intelligence brief, full evidence-chained, with a Pending review badge. Reports are queued for human review within 24 h."></span>
+          <span style="margin-left:auto;font-size:11px;color:var(--text-tertiary)">7 of 10 remaining</span>
+        </div>
+        <select class="sel" style="margin-bottom:8px"><option>Select subject…</option><option>Council of Ministers</option><option>Joseph Aoun (Presidency)</option><option>Nawaf Salam (PM)</option><option>Hezbollah (party)</option><option>Iran / IRGC</option><option>Banque du Liban</option><option>Lebanese Armed Forces</option></select>
+        <select class="sel" style="margin-bottom:8px"><option>Last 7 days</option><option>Last 14 days</option><option>Last 30 days</option><option>Custom range…</option></select>
+        <select class="sel" style="margin-bottom:10px"><option>Select focus…</option><option>Current state &amp; developments</option><option>Historical record</option><option>Network &amp; influence</option><option>Decision-making</option><option>Foreign influence</option><option>Risk &amp; stability</option></select>
+        <button class="btn btn-block" onclick="goTab('reports')">Generate report →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g-3">
+    <!-- Share of voice -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Share of voice — institutions</div>
+        <span class="info" data-tip="<strong>Share of voice.</strong> Proportion of all monitored mentions in Arabic, English, French, Hebrew across 84 sources, last 7 days. Affiliated-source content weighted by reliability. Excludes non-political coverage."></span>
+        <div class="panel-sub"><span class="dot dot-live"></span>Live</div>
+      </div>
+      <div style="display:flex;height:10px;border-radius:4px;overflow:hidden;margin-bottom:14px">
+        <div style="flex:24;background:var(--critical)"></div>
+        <div style="flex:18;background:#5A6480"></div>
+        <div style="flex:14;background:#404A65"></div>
+        <div style="flex:12;background:#323B53"></div>
+        <div style="flex:32;background:var(--neu)"></div>
+      </div>
+      <div style="display:grid;gap:6px;font-size:12px">
+        <div style="display:flex;justify-content:space-between"><span><span class="dot" style="background:var(--critical);margin-right:6px"></span>Hezbollah (party)</span><span class="sec" style="color:var(--text-secondary);font-family:var(--mono)">24%</span></div>
+        <div style="display:flex;justify-content:space-between"><span><span class="dot" style="background:#5A6480;margin-right:6px"></span>Presidency</span><span style="color:var(--text-secondary);font-family:var(--mono)">18%</span></div>
+        <div style="display:flex;justify-content:space-between"><span><span class="dot" style="background:#404A65;margin-right:6px"></span>Parliament</span><span style="color:var(--text-secondary);font-family:var(--mono)">14%</span></div>
+        <div style="display:flex;justify-content:space-between"><span><span class="dot" style="background:#323B53;margin-right:6px"></span>Lebanese Army (LAF)</span><span style="color:var(--text-secondary);font-family:var(--mono)">12%</span></div>
+        <div style="display:flex;justify-content:space-between"><span><span class="dot" style="background:var(--neu);margin-right:6px"></span>All others</span><span style="color:var(--text-secondary);font-family:var(--mono)">32%</span></div>
+      </div>
+    </div>
+
+    <!-- Regional pressure -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Regional pressure</div>
+        <span class="info" data-tip="<strong>Goldstein scoring.</strong> Bilateral tension scores derived from GDELT-coded events (Goldstein scale, −10 to +10), aggregated 30-day rolling. Critical = sustained negative cooperation events; Low = neutral/positive."></span>
+        <div class="panel-sub" style="font-size:10px">Goldstein · 30d</div>
+      </div>
+      <div style="display:grid;gap:10px;font-size:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text-primary)">Lebanon — Israel</span><span class="pill pill-critical">Critical</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text-primary)">Lebanon — Iran</span><span class="pill pill-strained">High</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text-primary)">Lebanon — Syria</span><span class="pill pill-strained">Medium</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text-primary)">Lebanon — USA</span><span class="pill pill-stable">Low</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text-primary)">Lebanon — Saudi Arabia</span><span class="pill pill-stable">Low</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text-primary)">Syria — Israel</span><span class="pill pill-critical">Critical</span></div>
+      </div>
+    </div>
+
+    <!-- Community pulse -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Community pulse</div>
+        <span class="info tip-left" data-tip="<strong>Community sentiment.</strong> Net tone toward incumbent government, derived from community-aligned outlets and named-entity-mention sentiment in Arabic NLP, last 7 days. Range −100 to +100."></span>
+        <div class="panel-sub"><span class="dot dot-live"></span>Live</div>
+      </div>
+      <div>
+        <div class="cm-row"><span class="lab">Druze</span><div class="sb"><div class="pos" style="flex:55"></div><div class="ne" style="flex:30"></div><div class="neg" style="flex:15"></div></div><span class="net trend-up">+6</span></div>
+        <div class="cm-row"><span class="lab">Sunni</span><div class="sb"><div class="pos" style="flex:38"></div><div class="ne" style="flex:24"></div><div class="neg" style="flex:38"></div></div><span class="net trend-down">−4</span></div>
+        <div class="cm-row"><span class="lab">Shia</span><div class="sb"><div class="pos" style="flex:30"></div><div class="ne" style="flex:26"></div><div class="neg" style="flex:44"></div></div><span class="net trend-down">−14</span></div>
+        <div class="cm-row"><span class="lab">Maronite</span><div class="sb"><div class="pos" style="flex:54"></div><div class="ne" style="flex:31"></div><div class="neg" style="flex:15"></div></div><span class="net trend-up">+5</span></div>
+        <div class="cm-row"><span class="lab">Greek Orth.</span><div class="sb"><div class="pos" style="flex:48"></div><div class="ne" style="flex:36"></div><div class="neg" style="flex:16"></div></div><span class="net trend-up">+4</span></div>
+        <div class="cm-row"><span class="lab">Secular/Civil</span><div class="sb"><div class="pos" style="flex:32"></div><div class="ne" style="flex:27"></div><div class="neg" style="flex:41"></div></div><span class="net trend-down">−9</span></div>
+        <div class="cm-row"><span class="lab">Armenian</span><div class="sb"><div class="pos" style="flex:50"></div><div class="ne" style="flex:38"></div><div class="neg" style="flex:12"></div></div><span class="net trend-up">+2</span></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============== INSTITUTIONS ============== -->
+<section class="tabpanel" id="tab-institutions">
+  <div class="grid g-260">
+    <!-- Sidebar -->
+    <aside class="panel" style="padding:0;height:fit-content">
+      <div style="padding:14px 14px 8px">
+        <input class="inp" placeholder="Search institutions…" id="inst-search">
+        <div class="fpills" style="margin:10px 0 0">
+          <button class="fpill active">All</button>
+          <button class="fpill">Executive</button>
+          <button class="fpill">Security</button>
+          <button class="fpill">Legislative</button>
+          <button class="fpill">Financial</button>
+        </div>
+      </div>
+
+      <div class="cat-label">Executive</div>
+      <div id="inst-list">
+        <div class="lrow" data-inst="presidency">
+          <div class="ic">⬡</div>
+          <div class="body"><div class="nm">Presidency of the Republic</div><div class="meta">Joseph Aoun · Maronite</div></div>
+          <div class="right"><span class="pill pill-stable">Stable</span><div style="margin-top:3px"><span class="dot dot-live"></span> Live</div></div>
+        </div>
+        <div class="lrow active" data-inst="com">
+          <div class="ic">⬡</div>
+          <div class="body"><div class="nm">Council of Ministers</div><div class="meta">Nawaf Salam · Sunni</div></div>
+          <div class="right"><span class="pill pill-strained">Strained</span><div style="margin-top:3px"><span class="dot dot-live"></span> Live</div></div>
+        </div>
+        <div class="lrow" data-inst="pm">
+          <div class="ic">⬡</div>
+          <div class="body"><div class="nm">Office of the Prime Minister</div><div class="meta">Nawaf Salam</div></div>
+          <div class="right"><span class="pill pill-stable">Stable</span><div style="margin-top:3px">4h ago</div></div>
+        </div>
+      </div>
+
+      <div class="cat-label">Security</div>
+      <div>
+        <div class="lrow" data-inst="laf">
+          <div class="ic">⬡</div>
+          <div class="body"><div class="nm">Lebanese Armed Forces</div><div class="meta">Gen. Rodolphe Haykal · Maronite</div></div>
+          <div class="right"><span class="pill pill-stable">Stable</span><div style="margin-top:3px"><span class="dot dot-live"></span> Live</div></div>
+        </div>
+        <div class="lrow" data-inst="isf">
+          <div class="ic">⬡</div>
+          <div class="body"><div class="nm">Internal Security Forces</div><div class="meta">Maj.Gen. Imad Osman · Sunni</div></div>
+          <div class="right"><span class="pill pill-stable">Stable</span><div style="margin-top:3px"><span class="dot dot-live"></span> Live</div></div>
+        </div>
+        <div class="lrow" data-inst="gs">
+          <div class="ic">⬡</div>
+          <div class="body"><div class="nm">General Security</div><div class="meta">Maj.Gen. Elias Baissari · Shia</div></div>
+          <div class="right"><span class="pill pill-strained">Strained</span><div style="margin-top:3px">3h ago</div></div>
+        </div>
+        <div class="lrow" data-inst="ss">
+          <div class="ic">⬡</div>
+          <div class="body"><div class="nm">State Security</div><div class="meta">Maj.Gen. Antoine Saliba · Maronite</div></div>
+          <div class="right"><span class="pill pill-stable">Stable</span><div style="margin-top:3px">5h ago</div></div>
+        </div>
+      </div>
+
+      <div class="cat-label">Legislative</div>
+      <div>
+        <div class="lrow" data-inst="parl">
+          <div class="ic">⬡</div>
+          <div class="body"><div class="nm">Parliament</div><div class="meta">Nabih Berri (Speaker) · Shia</div></div>
+          <div class="right"><span class="pill pill-strained">Strained</span><div style="margin-top:3px"><span class="dot dot-live"></span> Live</div></div>
+        </div>
+      </div>
+
+      <div class="cat-label">Financial</div>
+      <div>
+        <div class="lrow" data-inst="bdl">
+          <div class="ic">⬡</div>
+          <div class="body"><div class="nm">Banque du Liban</div><div class="meta">Karim Souaid (Gov.) · Sunni</div></div>
+          <div class="right"><span class="pill pill-critical">Critical</span><div style="margin-top:3px"><span class="dot dot-live"></span> Live</div></div>
+        </div>
+        <div class="lrow" data-inst="mof">
+          <div class="ic">⬡</div>
+          <div class="body"><div class="nm">Ministry of Finance</div><div class="meta">Yassine Jaber · Shia (Amal)</div></div>
+          <div class="right"><span class="pill pill-critical">Critical</span><div style="margin-top:3px">2h ago</div></div>
+        </div>
+      </div>
+
+      <div class="cat-label">Judiciary</div>
+      <div>
+        <div class="lrow" data-inst="jud">
+          <div class="ic">⬡</div>
+          <div class="body"><div class="nm">Court of Cassation</div><div class="meta">Souheil Abboud (Pres.)</div></div>
+          <div class="right"><span class="pill pill-strained">Strained</span><div style="margin-top:3px">6h ago</div></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div>
+      <div class="profile-head">
+        <div class="initials lg" style="background:var(--surface);color:var(--teal);border:1px solid var(--teal-dim)">⬡</div>
+        <div class="body">
+          <div class="nm">Council of Ministers <span class="ar" style="margin-left:8px">مجلس الوزراء</span></div>
+          <div class="meta">Executive · 24 ministers · Formed 8 Feb 2025 · Constitutional basis: Taif Agreement Art. 17 (1990)</div>
+        </div>
+        <div class="right">
+          <div><span class="dot dot-live"></span> Live · Updated 4 min ago</div>
+          <span class="info" data-tip="<strong>Council of Ministers.</strong> The constitutional executive body of Lebanon. 24 ministers including the PM. Approves laws before referral to Parliament; issues decrees; nominally directs the security services. Sectarian distribution governed by 1990 Taif amendment."></span>
+        </div>
+      </div>
+
+      <div class="grid g-3" style="margin-bottom:14px">
+        <div class="kpi"><div class="lab">Prime Minister</div><div class="v">Nawaf Salam</div><div class="s">Sunni · Reform-oriented</div></div>
+        <div class="kpi"><div class="lab">Formation</div><div class="v">8 Feb 2025</div><div class="s">First new govt in 3 years</div></div>
+        <div class="kpi"><div class="lab">Confidence vote</div><div class="v">95 of 128</div><div class="s">26 Feb 2025</div></div>
+      </div>
+
+      <div class="subtabs" id="inst-subtabs">
+        <div class="subtab active" data-st="current">Current State</div>
+        <div class="subtab" data-st="history">History</div>
+        <div class="subtab" data-st="dec">Decision-Making</div>
+        <div class="subtab" data-st="for">Foreign Influence</div>
+        <div class="subtab" data-st="net">Network</div>
+        <div class="subtab" data-st="mile">Milestones</div>
+        <div class="subtab" data-st="perf">Performance</div>
+      </div>
+
+      <div id="inst-st-current">
+        <div class="panel" style="margin-bottom:12px">
+          <div class="panel-head">
+            <div class="panel-title">Composition — 24 ministers · party distribution</div>
+            <span class="info" data-tip="<strong>Composition.</strong> Allocation of ministers by political affiliation. Lebanon's confessional cabinet system requires sectarian balance, but party allocation reflects coalition negotiation. Independents are PM-nominated technocrats."></span>
+          </div>
+          <div style="display:flex;height:14px;border-radius:0;overflow:hidden;margin:4px 0 12px">
+            <div style="flex:4;background:#7B5BD0" title="LF · 4"></div>
+            <div style="flex:2;background:#E89B22" title="FPM · 2"></div>
+            <div style="flex:2;background:var(--critical)" title="Hezbollah · 2"></div>
+            <div style="flex:4;background:#22A38B" title="Amal · 4"></div>
+            <div style="flex:1;background:#3478CC" title="PSP · 1"></div>
+            <div style="flex:1;background:#9C5C5C" title="Kataeb · 1"></div>
+            <div style="flex:10;background:var(--neu)" title="Independents · 10"></div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:14px;font-size:11px;color:var(--text-secondary)">
+            <span><i style="display:inline-block;width:9px;height:9px;background:#7B5BD0;margin-right:5px"></i>Lebanese Forces · 4</span>
+            <span><i style="display:inline-block;width:9px;height:9px;background:#E89B22;margin-right:5px"></i>FPM · 2</span>
+            <span><i style="display:inline-block;width:9px;height:9px;background:var(--critical);margin-right:5px"></i>Hezbollah · 2</span>
+            <span><i style="display:inline-block;width:9px;height:9px;background:#22A38B;margin-right:5px"></i>Amal · 4</span>
+            <span><i style="display:inline-block;width:9px;height:9px;background:#3478CC;margin-right:5px"></i>PSP · 1</span>
+            <span><i style="display:inline-block;width:9px;height:9px;background:#9C5C5C;margin-right:5px"></i>Kataeb · 1</span>
+            <span><i style="display:inline-block;width:9px;height:9px;background:var(--neu);margin-right:5px"></i>Independents · 10</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Party-control assessment</div>
+            <span class="info" data-tip="<strong>Nominal vs. real authority.</strong> Differentiates constitutional/legal authority from observed decision-making power. Foreign-influence rows carry a confidence tier badge."></span>
+            <span class="pill pill-pending" style="margin-left:auto">⏳ Pending review</span>
+          </div>
+          <dl style="margin:0">
+            <div class="def-row">
+              <dt>Nominal authority</dt>
+              <dd>Nawaf Salam (PM), per constitutional mandate.</dd>
+            </div>
+            <div class="def-row">
+              <dt>Real decision authority</dt>
+              <dd>Coalition-negotiated. Hezbollah retains 2 portfolios (Health, Labour); Amal 4 portfolios incl. Finance, Public Works, Sports/Youth, Telecoms.</dd>
+            </div>
+            <div class="def-row">
+              <dt>Veto actors</dt>
+              <dd>Hezbollah: armed capacity creates implicit veto on security-related decisions. Speaker Berri: parliamentary calendar control.</dd>
+            </div>
+            <div class="def-row">
+              <dt>Foreign influence</dt>
+              <dd>USA / France: supported Salam appointment. Saudi Arabia: financial leverage via deposits. Iran: opposes current government direction. <span class="pill pill-tier1" style="margin-left:6px">Tier 1 · Named · 4 sources</span></dd>
+            </div>
+          </dl>
+          <div class="evidence">
+            <strong>Evidence:</strong>
+            <a href="#">Raw sources (87)</a><span class="arr">→</span>
+            <a href="#">Processed analysis</a><span class="arr">→</span>
+            <a href="#">This assessment</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PEOPLE ============== -->
+<section class="tabpanel" id="tab-people">
+  <div class="panel" style="margin-bottom:12px">
+    <input class="inp" style="padding:12px 14px" placeholder="Search people — names, roles, institutions…">
+    <div class="fpills" style="margin-top:10px;margin-bottom:0">
+      <button class="fpill active">All</button>
+      <button class="fpill">Executive</button>
+      <button class="fpill">Security</button>
+      <button class="fpill">Legislators</button>
+      <button class="fpill">Financial</button>
+      <button class="fpill">Sanctioned only</button>
+    </div>
+  </div>
+
+  <!-- Search results -->
+  <div class="grid g-2" style="margin-bottom:14px">
+    <div class="panel" style="padding:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="initials">JA</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">Joseph Aoun</div>
+          <div style="font-size:11.5px;color:var(--text-secondary)">President of the Republic</div>
+          <div style="font-size:11px;color:var(--text-tertiary)">Maronite · LAF (former, retired) · Elected 9 Jan 2025</div>
+        </div>
+        <div style="text-align:right"><div><span class="dot dot-live"></span> Live</div><div style="font-size:10px;color:var(--text-tertiary);margin-top:4px">Backed by USA / France</div></div>
+        <span class="info" data-tip="<strong>Joseph Aoun.</strong> Lebanese Armed Forces commander 2017–2025. Elected President 9 Jan 2025 on second-round vote (71 of 128 MPs) after 13 prior failed sessions. No party affiliation. Reformist mandate."></span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;font-size:11.5px">
+        <a href="#">Track record</a><span style="color:var(--text-tertiary)">·</span>
+        <a href="#">Network</a><span style="color:var(--text-tertiary)">·</span>
+        <a href="#">Foreign contacts</a><span style="color:var(--text-tertiary)">·</span>
+        <a href="#">Record</a>
+      </div>
+    </div>
+
+    <div class="panel" style="padding:14px;border-color:var(--teal-dim)">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="initials">NS</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">Nawaf Abdallah Salam</div>
+          <div style="font-size:11.5px;color:var(--text-secondary)">Prime Minister of Lebanon</div>
+          <div style="font-size:11px;color:var(--text-tertiary)">Sunni · Beirut · Born 15 Dec 1953</div>
+        </div>
+        <div style="text-align:right"><div><span class="dot dot-live"></span> Live</div><div style="font-size:10px;color:var(--text-tertiary);margin-top:4px">Selected ↓</div></div>
+        <span class="info" data-tip="<strong>Nawaf Salam.</strong> ICJ President (Feb 2024 – Feb 2025), resigned upon PM appointment. Lebanon's UN Ambassador 2007–2017. Sunni reformist. Family: Salam political dynasty (uncle Saeb Salam: PM × 4, cousin Tammam Salam: PM × 1)."></span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;font-size:11.5px">
+        <a href="#">Track record</a><span style="color:var(--text-tertiary)">·</span>
+        <a href="#">Network</a><span style="color:var(--text-tertiary)">·</span>
+        <a href="#">Foreign contacts</a><span style="color:var(--text-tertiary)">·</span>
+        <a href="#">Record</a>
+      </div>
+    </div>
+
+    <div class="panel" style="padding:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="initials">NB</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">Nabih Berri</div>
+          <div style="font-size:11.5px;color:var(--text-secondary)">Speaker of Parliament · Amal Movement leader</div>
+          <div style="font-size:11px;color:var(--text-tertiary)">Shia · Tibnin · Speaker since 1992 (8 terms)</div>
+        </div>
+        <div style="text-align:right"><div><span class="dot dot-live"></span> Live</div></div>
+        <span class="info" data-tip="<strong>Nabih Berri.</strong> Speaker of Parliament continuously since 1992. Founder/leader of Amal Movement. Shia Duo with Hezbollah. Controls parliamentary calendar — historically used to block legislation, including BdL accountability laws."></span>
+      </div>
+    </div>
+
+    <div class="panel" style="padding:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="initials" style="background:#9A2222">NQ</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">Naim Qassem</div>
+          <div style="font-size:11.5px;color:var(--text-secondary)">Secretary General · Hezbollah</div>
+          <div style="font-size:11px;color:var(--text-tertiary)">Shia · Born 1953 · SG since Oct 2024</div>
+        </div>
+        <div style="text-align:right"><span class="pill pill-aff-foreign">OFAC SDN</span></div>
+        <span class="info" data-tip="<strong>Naim Qassem.</strong> Hezbollah Secretary General since 29 Oct 2024, succeeding Hassan Nasrallah (assassinated Sept 2024). Long-time deputy SG (1991–2024). On OFAC SDN list since 2018."></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selected profile -->
+  <div class="profile-head">
+    <div class="initials lg">NS</div>
+    <div class="body">
+      <div class="nm">Nawaf Abdallah Salam <span class="ar" style="margin-left:8px">نواف سلام</span></div>
+      <div class="meta">Prime Minister of Lebanon · Sunni · Beirut · Born 15 Dec 1953</div>
+      <div style="font-size:11.5px;color:var(--text-tertiary);margin-top:4px">Family: Salam political dynasty (uncle: PM × 4, cousin Tammam Salam: PM × 1)</div>
+    </div>
+    <div class="right">
+      <div><span class="dot dot-live"></span> Live · Updated 6 min ago</div>
+    </div>
+  </div>
+
+  <div class="subtabs">
+    <div class="subtab active">Overview</div>
+    <div class="subtab">Career</div>
+    <div class="subtab">Network</div>
+    <div class="subtab">Record</div>
+    <div class="subtab">Foreign Contacts</div>
+    <div class="subtab">Sentiment</div>
+  </div>
+
+  <div class="grid g-4" style="margin-bottom:14px">
+    <div class="kpi"><div class="lab">Current role</div><div class="v">Prime Minister</div><div class="s">Since 8 Feb 2025</div></div>
+    <div class="kpi"><div class="lab">Family dynasty</div><div class="v">2 former PMs</div><div class="s">Saeb Salam (×4); Tammam (×1)</div></div>
+    <div class="kpi"><div class="lab">Sanctions</div><div class="v" style="color:var(--teal)">None</div><div class="s">Clean across OFAC / EU / UN / UK OFSI</div></div>
+    <div class="kpi"><div class="lab">Confidence</div><div class="v">High</div><div class="s">Multi-source · 31 sources</div></div>
+  </div>
+
+  <div class="grid g-2" style="gap:14px">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Career — current and past positions</div>
+        <span class="info" data-tip="<strong>Career record.</strong> Each row sourced from official records (UN, ICJ, Lebanese Government Gazette). Entries are immutable once verified."></span>
+      </div>
+      <table class="tbl">
+        <tr><td>Prime Minister of Lebanon</td><td class="sec">Feb 2025 – present</td></tr>
+        <tr><td>President, International Court of Justice</td><td class="sec">Feb 2024 – Feb 2025</td></tr>
+        <tr><td>Judge, ICJ</td><td class="sec">Feb 2018 – Feb 2025</td></tr>
+        <tr><td>Lebanon's Ambassador to the UN</td><td class="sec">Jul 2007 – Dec 2017</td></tr>
+        <tr><td>Visiting Professor, AUB / Sciences Po</td><td class="sec">1992 – 2007</td></tr>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Record — achievements & concerns</div>
+        <span class="info" data-tip="<strong>Record.</strong> Achievements (teal) and concerns (amber) are each labeled by source type — Official, Investigative journalism, Research institution, Sanctions record — so subscribers apply their own weight."></span>
+      </div>
+      <ul class="rec-list">
+        <li>
+          <div class="t">✓ ICJ presidency — first Lebanese, second Arab</div>
+          UN official record. Elected 6 Feb 2024 by 15 ICJ judges.
+          <div class="src">Source: UN official record · 2024 · Confirmed</div>
+        </li>
+        <li>
+          <div class="t">✓ UN Resolution 1701 advocacy</div>
+          Implementation framework during Lebanon's UNSC term (2010–11).
+          <div class="src">Source: UN records · 2010–2011 · Confirmed</div>
+        </li>
+        <li>
+          <div class="t">✓ Author — 6 books on Lebanese constitutional reform</div>
+          Published 2003–2013 (Brill, Saqi).
+          <div class="src">Source: Publication records · Confirmed</div>
+        </li>
+        <li class="warn">
+          <div class="t">⚠ No corruption records found</div>
+          Last cross-checked across OFAC, EU, UN, OCCRP, ICIJ, Daraj, Public Source.
+          <div class="src">Last checked: 26 Apr 2026</div>
+        </li>
+        <li class="warn">
+          <div class="t">⚠ Hezbollah opposition to appointment</div>
+          Hezbollah opposed his nomination — political, not legal basis.
+          <div class="src">Source: Reuters, Al Jazeera, L'Orient Today · Jan 2025 · Documented</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============== NETWORK ============== -->
+<section class="tabpanel" id="tab-network">
+  <div class="grid g-220-1-280" style="gap:12px">
+    <!-- Filters -->
+    <aside class="panel">
+      <div class="panel-head"><div class="panel-title" style="font-size:13px">Network filters</div>
+        <span class="info" data-tip="<strong>Network filters.</strong> Combine to focus the graph. Confidence tier filter is critical — Tier 1 only removes inferred relationships from view."></span>
+      </div>
+      <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:10px 0 6px">Node types</div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12px;margin:5px 0"><input type="checkbox" checked><span class="dot" style="background:#5A6480"></span>People</label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12px;margin:5px 0"><input type="checkbox" checked><span class="dot" style="background:#3E4560"></span>Institutions</label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12px;margin:5px 0"><input type="checkbox" checked><span class="dot" style="background:#7B5BD0"></span>Political parties</label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12px;margin:5px 0"><input type="checkbox" checked><span class="dot" style="background:var(--critical)"></span>Foreign actors</label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12px;margin:5px 0"><input type="checkbox"><span class="dot" style="background:var(--warning)"></span>Business entities</label>
+
+      <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px">Relationship type</div>
+      <label style="display:flex;gap:8px;font-size:12px;margin:4px 0"><input type="checkbox" checked> Commands / authority</label>
+      <label style="display:flex;gap:8px;font-size:12px;margin:4px 0"><input type="checkbox" checked> Funds / funded by</label>
+      <label style="display:flex;gap:8px;font-size:12px;margin:4px 0"><input type="checkbox" checked> Party affiliation</label>
+      <label style="display:flex;gap:8px;font-size:12px;margin:4px 0"><input type="checkbox" checked> Foreign contact</label>
+      <label style="display:flex;gap:8px;font-size:12px;margin:4px 0"><input type="checkbox"> Family relationship</label>
+
+      <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px">Confidence</div>
+      <label style="display:flex;gap:8px;font-size:12px;margin:4px 0"><input type="radio" name="tier" checked> All tiers</label>
+      <label style="display:flex;gap:8px;font-size:12px;margin:4px 0"><input type="radio" name="tier"> Tier 1 only (named)</label>
+      <label style="display:flex;gap:8px;font-size:12px;margin:4px 0"><input type="radio" name="tier"> Tier 2+ (described)</label>
+
+      <button class="btn btn-block" style="margin-top:14px">Apply filters</button>
+    </aside>
+
+    <!-- Graph -->
+    <div>
+      <div class="panel" style="padding:0;overflow:hidden">
+        <div class="panel-head" style="padding:12px 14px;margin:0;border-bottom:1px solid var(--border-subtle)">
+          <div class="panel-title">Power network — Lebanon · 14 nodes</div>
+          <span class="info" data-tip="<strong>Network graph.</strong> Force-directed layout. Node colors = type; node size = degree centrality. Edges show relationship type and confidence tier. Click any node to view details."></span>
+          <div class="panel-sub"><span class="dot dot-live"></span>Live</div>
+        </div>
+        <svg class="net-svg" viewBox="0 0 800 560" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,0 L8,4 L0,8 z" fill="#7E8699"/>
+            </marker>
+          </defs>
+          <!-- edges -->
+          <g stroke-width="1.4" fill="none" opacity=".75">
+            <!-- Hezb -> Iran (commands, thick red) -->
+            <line x1="200" y1="280" x2="100" y2="120" stroke="#E03E3E" stroke-width="2.4" marker-end="url(#arr)"/>
+            <!-- Nasredine -> Hezb -->
+            <line x1="280" y1="430" x2="210" y2="295" stroke="#E03E3E" stroke-width="1.2" marker-end="url(#arr)"/>
+            <!-- Haidar -> Hezb -->
+            <line x1="180" y1="450" x2="200" y2="295" stroke="#E03E3E" stroke-width="1.2" marker-end="url(#arr)"/>
+            <!-- Aoun -> USA dashed -->
+            <line x1="430" y1="190" x2="600" y2="100" stroke="#3478CC" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+            <!-- Aoun -> France dashed -->
+            <line x1="430" y1="200" x2="700" y2="170" stroke="#3478CC" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+            <!-- Salam -> Aoun -->
+            <line x1="430" y1="295" x2="430" y2="220" stroke="#7E8699" marker-end="url(#arr)"/>
+            <!-- Berri -> Hezb (allied) -->
+            <line x1="320" y1="200" x2="220" y2="265" stroke="#E89B22" stroke-width="1.6"/>
+            <!-- Bassil -> FPM -> Hezb (former alliance, dashed) -->
+            <line x1="600" y1="280" x2="230" y2="280" stroke="#7B5BD0" stroke-dasharray="3 3" opacity=".55"/>
+            <!-- LAF -> Aoun -->
+            <line x1="430" y1="380" x2="430" y2="220" stroke="#7E8699" marker-end="url(#arr)"/>
+            <!-- LAF -> USA -->
+            <line x1="475" y1="395" x2="600" y2="115" stroke="#3478CC" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+            <!-- Geagea -> LF (party) -->
+            <line x1="640" y1="430" x2="700" y2="380" stroke="#7B5BD0"/>
+            <!-- Jumblatt PSP -->
+            <line x1="100" y1="380" x2="170" y2="445" stroke="#3478CC"/>
+          </g>
+
+          <!-- nodes -->
+          <g font-family="Inter" font-size="11" fill="#E4E7F0">
+            <!-- Iran -->
+            <g><polygon points="100,90 130,120 100,150 70,120" fill="#E03E3E" stroke="#1A2030" stroke-width="2"/><text x="100" y="78" text-anchor="middle">Iran / IRGC</text></g>
+            <!-- USA -->
+            <g><polygon points="600,80 624,104 600,128 576,104" fill="#3478CC" stroke="#1A2030" stroke-width="2"/><text x="600" y="68" text-anchor="middle">USA</text></g>
+            <!-- France -->
+            <g><polygon points="710,150 728,168 710,186 692,168" fill="#3478CC" stroke="#1A2030" stroke-width="2"/><text x="710" y="138" text-anchor="middle">France</text></g>
+
+            <!-- Hezbollah -->
+            <g><circle cx="210" cy="280" r="28" fill="#E03E3E" stroke="#1A2030" stroke-width="2"/><text x="210" y="284" text-anchor="middle" fill="#fff" font-weight="500">Hezb.</text><text x="210" y="324" text-anchor="middle" fill="#7E8699" font-size="10">Hezbollah</text></g>
+            <!-- Aoun -->
+            <g><circle cx="430" cy="200" r="25" fill="#5A6480" stroke="#1A2030" stroke-width="2"/><text x="430" y="204" text-anchor="middle" fill="#fff" font-weight="500">JA</text><text x="430" y="240" text-anchor="middle" fill="#7E8699" font-size="10">Joseph Aoun · Presidency</text></g>
+            <!-- Salam -->
+            <g><circle cx="430" cy="320" r="22" fill="#5A6480" stroke="#1A2030" stroke-width="2"/><text x="430" y="324" text-anchor="middle" fill="#fff" font-weight="500">NS</text><text x="430" y="358" text-anchor="middle" fill="#7E8699" font-size="10">Nawaf Salam · PM</text></g>
+            <!-- LAF -->
+            <g><rect x="410" y="375" width="40" height="40" fill="#3E4560" stroke="#1A2030" stroke-width="2"/><text x="430" y="400" text-anchor="middle" fill="#fff" font-weight="500" font-size="10">LAF</text></g>
+            <!-- Berri -->
+            <g><circle cx="335" cy="190" r="20" fill="#22A38B" stroke="#1A2030" stroke-width="2"/><text x="335" y="194" text-anchor="middle" fill="#fff" font-weight="500" font-size="10">NB</text><text x="335" y="226" text-anchor="middle" fill="#7E8699" font-size="10">Berri · Amal</text></g>
+            <!-- Nasredine -->
+            <g><circle cx="290" cy="445" r="14" fill="#9A2222" stroke="#1A2030" stroke-width="2"/><text x="290" y="449" text-anchor="middle" fill="#fff" font-size="9">RN</text><text x="290" y="478" text-anchor="middle" fill="#7E8699" font-size="9.5">Nasredine · Health</text></g>
+            <!-- Haidar -->
+            <g><circle cx="170" cy="465" r="14" fill="#9A2222" stroke="#1A2030" stroke-width="2"/><text x="170" y="469" text-anchor="middle" fill="#fff" font-size="9">MH</text><text x="170" y="498" text-anchor="middle" fill="#7E8699" font-size="9.5">Haidar · Labour</text></g>
+            <!-- Bassil -->
+            <g><circle cx="610" cy="280" r="18" fill="#7B5BD0" stroke="#1A2030" stroke-width="2"/><text x="610" y="284" text-anchor="middle" fill="#fff" font-size="10">GB</text><text x="610" y="316" text-anchor="middle" fill="#7E8699" font-size="10">Bassil · FPM</text></g>
+            <!-- Geagea -->
+            <g><circle cx="650" cy="440" r="18" fill="#7B5BD0" stroke="#1A2030" stroke-width="2"/><text x="650" y="444" text-anchor="middle" fill="#fff" font-size="10">SG</text><text x="650" y="476" text-anchor="middle" fill="#7E8699" font-size="10">Geagea · LF</text></g>
+            <!-- LF anchor -->
+            <g><rect x="690" y="370" width="22" height="22" fill="#3E4560" stroke="#1A2030" stroke-width="2"/><text x="701" y="385" text-anchor="middle" fill="#fff" font-size="9">LF</text></g>
+            <!-- Jumblatt -->
+            <g><circle cx="90" cy="360" r="18" fill="#3478CC" stroke="#1A2030" stroke-width="2"/><text x="90" y="364" text-anchor="middle" fill="#fff" font-size="10">WJ</text><text x="90" y="396" text-anchor="middle" fill="#7E8699" font-size="10">Jumblatt · PSP</text></g>
+            <!-- PSP anchor -->
+            <g><rect x="158" y="438" width="20" height="20" fill="#3E4560" stroke="#1A2030" stroke-width="2"/><text x="168" y="453" text-anchor="middle" fill="#fff" font-size="9">PSP</text></g>
+
+            <!-- edge labels -->
+            <text x="148" y="200" fill="#E03E3E" font-size="10">commands · T1</text>
+            <text x="500" y="155" fill="#3478CC" font-size="10">backed by · T1</text>
+            <text x="290" y="245" fill="#E89B22" font-size="10">Shia Duo</text>
+            <text x="445" y="265" fill="#7E8699" font-size="10">reports to</text>
+          </g>
+        </svg>
+      </div>
+      <div class="net-legend">
+        <span><i style="background:#5A6480"></i>Person</span>
+        <span><i style="background:#E03E3E"></i>Foreign actor / proxy</span>
+        <span><i style="background:#7B5BD0"></i>Party leader</span>
+        <span><i style="background:#3E4560;border-radius:0"></i>Institution</span>
+        <span><i style="background:#22A38B"></i>Amal-aligned</span>
+        <span style="margin-left:auto"><span style="display:inline-block;width:18px;height:1px;background:#3478CC;margin-right:5px;vertical-align:middle"></span>Tier 1 named · solid</span>
+        <span><span style="display:inline-block;width:18px;border-top:1px dashed #3478CC;margin-right:5px;vertical-align:middle"></span>Tier 2 described · dashed</span>
+      </div>
+    </div>
+
+    <!-- Right detail -->
+    <aside class="panel">
+      <div style="font-size:15px;font-weight:500;color:var(--text-primary)">Hezbollah</div>
+      <div style="font-size:13px;color:var(--text-secondary);font-family:'Noto Sans Arabic';direction:rtl;margin-bottom:10px">حزب الله</div>
+      <div style="border-top:1px solid var(--border-subtle);margin:6px -16px 10px"></div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.7">
+        <div><strong style="color:var(--text-primary);font-weight:500">Type:</strong> Political faction · armed</div>
+        <div><strong style="color:var(--text-primary);font-weight:500">Community:</strong> Shia</div>
+        <div><strong style="color:var(--text-primary);font-weight:500">Founded:</strong> 1982</div>
+        <div><strong style="color:var(--text-primary);font-weight:500">Sec.-General:</strong> Naim Qassem (since Oct 2024)</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px">Direct connections · 8</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.7">
+        <div>→ <strong style="color:var(--text-primary);font-weight:500">Iran / IRGC</strong><br><span style="font-size:11px">Commands · <span class="pill pill-tier1">Tier 1 · 4 sources</span></span></div>
+        <div style="margin-top:8px">→ <strong style="color:var(--text-primary);font-weight:500">Nabih Berri / Amal</strong><br><span style="font-size:11px">Allied · Shia Duo · <span class="pill pill-tier1">Tier 1</span></span></div>
+        <div style="margin-top:8px">→ <strong style="color:var(--text-primary);font-weight:500">Rakan Nasredine</strong><br><span style="font-size:11px">Member · Min. of Health</span></div>
+        <div style="margin-top:8px">→ <strong style="color:var(--text-primary);font-weight:500">Muhammad Haidar</strong><br><span style="font-size:11px">Member · Min. of Labour</span></div>
+      </div>
+      <div style="border-top:1px solid var(--border-subtle);margin:14px -16px 10px"></div>
+      <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">AI network summary <span class="pill pill-pending" style="margin-left:6px">⏳ Pending</span></div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.65;font-style:italic">
+        "Hezbollah operates as the dominant non-state node in Lebanon's power network, maintaining direct command relationship with Iran's IRGC-Quds Force while holding 2 government portfolios and exercising informal veto power over security policy."
+      </div>
+      <a href="#" style="display:inline-block;margin-top:12px;font-size:12px">View full profile →</a>
+    </aside>
+  </div>
+</section>
+
+<!-- ============== ECONOMICS ============== -->
+<section class="tabpanel" id="tab-economics">
+  <div class="subtabs" id="econ-subtabs">
+    <div class="subtab active" data-st="macro">Macro</div>
+    <div class="subtab" data-st="mon">Monetary &amp; Exchange</div>
+    <div class="subtab" data-st="fiscal">Fiscal</div>
+    <div class="subtab" data-st="bank">Banking</div>
+    <div class="subtab" data-st="reform">Reform Tracker</div>
+    <div class="subtab" data-st="sanc">Sanctions</div>
+    <div class="subtab" data-st="ext">External</div>
+  </div>
+
+  <div id="econ-macro">
+    <div class="grid g-3" style="margin-bottom:14px">
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">GDP (Real)</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px">$28.3 B</div>
+        <div style="font-size:11.5px;color:var(--teal);margin-top:4px">↑ from $23.7 B (2024)</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">IMF · Apr 2026</div>
+        <span class="info" style="position:absolute;top:14px;right:14px" data-tip="<strong>Real GDP.</strong> IMF World Economic Outlook estimate. Reflects post-2024 partial recovery driven by remittances and tourism, against a 2018–2024 contraction of ≈ 60 %."></span>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">GDP per capita</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px">$5,240</div>
+        <div style="font-size:11.5px;color:var(--teal);margin-top:4px">↑ from $4,390</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">World Bank · Jan 2026</div>
+        <span class="info" style="position:absolute;top:14px;right:14px" data-tip="<strong>GDP per capita.</strong> Pre-2019 peak was ≈ $10,500. Current value reflects partial recovery in nominal USD terms; in PPP terms the gap is wider."></span>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Real GDP growth</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px">3.5%</div>
+        <div style="font-size:11.5px;color:var(--teal);margin-top:4px">↑ from −7.1% (2024)</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">World Bank · Jan 2026</div>
+        <span class="info tip-left" style="position:absolute;top:14px;right:14px" data-tip="<strong>Growth.</strong> First positive print since 2018. Largely consumption-led; investment remains negligible without IMF programme finalization."></span>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Inflation rate</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px">15.2%</div>
+        <div style="font-size:11.5px;color:var(--teal);margin-top:4px">↓ from 28% (2024)</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">World Bank · Jun 2025</div>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Unemployment</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px">~35%</div>
+        <div style="font-size:11.5px;color:var(--text-secondary);margin-top:4px">→ Stable (est.)</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">ILO estimate · 2024</div>
+      </div>
+      <div class="panel" style="position:relative">
+        <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Poverty rate</div>
+        <div style="font-size:24px;font-weight:500;margin-top:4px;color:var(--critical)">&gt;80%</div>
+        <div style="font-size:11.5px;color:var(--text-secondary);margin-top:4px">→ No improvement</div>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;font-family:var(--mono)">World Bank · 2024</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Political factors driving current economic state</div>
+        <span class="info" data-tip="<strong>Political-economic linkage.</strong> Each macro indicator paired with the political cause and the actors responsible. Status reflects whether the underlying decision is open, blocked, or resolved."></span>
+        <span class="pill pill-pending" style="margin-left:auto">⏳ Pending review</span>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Indicator</th><th>Political cause</th><th>Actor responsible</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Banking sector collapse</td><td class="sec">Political elite protected own deposits at depositor expense</td><td>Multiple parties</td><td><span class="pill pill-critical">Ongoing</span></td></tr>
+          <tr><td>Exchange-rate crisis</td><td class="sec">BdL monetary financing of fiscal deficit (2018–2023)</td><td>Riad Salameh (BdL, former)</td><td><span class="pill pill-strained">Resigned 2023</span></td></tr>
+          <tr><td>IMF reforms blocked</td><td class="sec">Key parties oppose bank-restructuring losses</td><td>Hezbollah, Amal</td><td><span class="pill pill-critical">6/8 conditions unmet</span></td></tr>
+          <tr><td>Electricity sector</td><td class="sec">EDL deficit funded by state, generators owned by political families</td><td>FPM (energy historically)</td><td><span class="pill pill-strained">Reform pending</span></td></tr>
+          <tr><td>Public-sector wages</td><td class="sec">Cabinet pay decree without revenue measure</td><td>Council of Ministers</td><td><span class="pill pill-strained">Inflation-coupled</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PARTIES ============== -->
+<section class="tabpanel" id="tab-parties">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <h2 style="font-size:18px;font-weight:500;margin:0">Lebanese political parties — 12 tracked</h2>
+    <span class="info" data-tip="<strong>Parties module.</strong> 12 Lebanese parties tracked identically: alliance map, electoral history, parliamentary bloc, ministerial portfolios, and sentiment. Hezbollah is dual-tracked as a domestic faction and as an Iran-aligned proxy."></span>
+  </div>
+
+  <div class="grid g-2" style="gap:12px">
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:10px"><div class="initials sm" style="background:var(--critical)">H</div>
+        <div style="flex:1"><div style="font-weight:500">Hezbollah <span class="ar" style="color:var(--text-secondary);font-family:'Noto Sans Arabic';font-size:12px;margin-left:6px">حزب الله</span></div><div style="font-size:11.5px;color:var(--text-secondary)">Shia · Founded 1982 · SG: Naim Qassem</div></div>
+        <span class="pill pill-critical">OFAC SDN</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;font-size:11.5px">
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Parl. seats</div><div style="font-size:14px;font-weight:500;margin-top:2px">13</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Cabinet portf.</div><div style="font-size:14px;font-weight:500;margin-top:2px">2</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Sentiment 7d</div><div style="font-size:14px;font-weight:500;margin-top:2px;color:var(--critical)">−14</div></div>
+      </div>
+      <div class="sb" style="margin-top:10px"><div class="neg" style="flex:48"></div><div class="ne" style="flex:24"></div><div class="pos" style="flex:28"></div></div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:10px"><div class="initials sm" style="background:#22A38B">A</div>
+        <div style="flex:1"><div style="font-weight:500">Amal Movement <span class="ar" style="color:var(--text-secondary);font-family:'Noto Sans Arabic';font-size:12px;margin-left:6px">حركة أمل</span></div><div style="font-size:11.5px;color:var(--text-secondary)">Shia · Founded 1974 · Leader: Nabih Berri</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;font-size:11.5px">
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Parl. seats</div><div style="font-size:14px;font-weight:500;margin-top:2px">14</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Cabinet portf.</div><div style="font-size:14px;font-weight:500;margin-top:2px">4</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Sentiment 7d</div><div style="font-size:14px;font-weight:500;margin-top:2px;color:var(--critical)">−8</div></div>
+      </div>
+      <div class="sb" style="margin-top:10px"><div class="neg" style="flex:38"></div><div class="ne" style="flex:32"></div><div class="pos" style="flex:30"></div></div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:10px"><div class="initials sm" style="background:#7B5BD0">LF</div>
+        <div style="flex:1"><div style="font-weight:500">Lebanese Forces (LF)</div><div style="font-size:11.5px;color:var(--text-secondary)">Maronite-Christian · Founded 1976 · Leader: Samir Geagea</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;font-size:11.5px">
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Parl. seats</div><div style="font-size:14px;font-weight:500;margin-top:2px">19</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Cabinet portf.</div><div style="font-size:14px;font-weight:500;margin-top:2px">4</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Sentiment 7d</div><div style="font-size:14px;font-weight:500;margin-top:2px;color:var(--teal)">+7</div></div>
+      </div>
+      <div class="sb" style="margin-top:10px"><div class="pos" style="flex:50"></div><div class="ne" style="flex:30"></div><div class="neg" style="flex:20"></div></div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:10px"><div class="initials sm" style="background:#E89B22">FPM</div>
+        <div style="flex:1"><div style="font-weight:500">Free Patriotic Movement (FPM)</div><div style="font-size:11.5px;color:var(--text-secondary)">Maronite · Founded 2005 · Leader: Gebran Bassil</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;font-size:11.5px">
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Parl. seats</div><div style="font-size:14px;font-weight:500;margin-top:2px">17</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Cabinet portf.</div><div style="font-size:14px;font-weight:500;margin-top:2px">2</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Sentiment 7d</div><div style="font-size:14px;font-weight:500;margin-top:2px;color:var(--critical)">−6</div></div>
+      </div>
+      <div class="sb" style="margin-top:10px"><div class="neg" style="flex:34"></div><div class="ne" style="flex:38"></div><div class="pos" style="flex:28"></div></div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:10px"><div class="initials sm" style="background:#3478CC">PSP</div>
+        <div style="flex:1"><div style="font-weight:500">Progressive Socialist Party</div><div style="font-size:11.5px;color:var(--text-secondary)">Druze · Founded 1949 · Leader: Walid &amp; Taymur Jumblatt</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;font-size:11.5px">
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Parl. seats</div><div style="font-size:14px;font-weight:500;margin-top:2px">8</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Cabinet portf.</div><div style="font-size:14px;font-weight:500;margin-top:2px">1</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Sentiment 7d</div><div style="font-size:14px;font-weight:500;margin-top:2px;color:var(--teal)">+4</div></div>
+      </div>
+      <div class="sb" style="margin-top:10px"><div class="pos" style="flex:46"></div><div class="ne" style="flex:32"></div><div class="neg" style="flex:22"></div></div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:10px"><div class="initials sm" style="background:#9C5C5C">K</div>
+        <div style="flex:1"><div style="font-weight:500">Kataeb Party</div><div style="font-size:11.5px;color:var(--text-secondary)">Maronite · Founded 1936 · Leader: Samy Gemayel</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;font-size:11.5px">
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Parl. seats</div><div style="font-size:14px;font-weight:500;margin-top:2px">3</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Cabinet portf.</div><div style="font-size:14px;font-weight:500;margin-top:2px">1</div></div>
+        <div><div style="color:var(--text-tertiary);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Sentiment 7d</div><div style="font-size:14px;font-weight:500;margin-top:2px;color:var(--teal)">+3</div></div>
+      </div>
+      <div class="sb" style="margin-top:10px"><div class="pos" style="flex:42"></div><div class="ne" style="flex:34"></div><div class="neg" style="flex:24"></div></div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px;font-size:12px;color:var(--text-tertiary)">+ 6 additional parties tracked: Marada, SSNP, Tashnag, Future Movement, Independent reformists, Civil Society blocs.</div>
+</section>
+
+<!-- ============== COMMUNITIES ============== -->
+<section class="tabpanel" id="tab-communities">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <h2 style="font-size:18px;font-weight:500;margin:0">Communities — 12 tracked</h2>
+    <span class="info" data-tip="<strong>Communities module.</strong> 12 communities including Secular/Civil tracked separately from political parties because community sentiment often diverges from party-line statements, particularly during reform pressure or government formation."></span>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Sentiment toward incumbent government — by community</div>
+      <span class="info" data-tip="<strong>Net sentiment.</strong> Aggregated tone toward the Salam government, measured across community-aligned outlets and named-entity-mention sentiment in Arabic NLP. Range −100 to +100. 7-day rolling."></span>
+      <div class="panel-sub"><span class="dot dot-live"></span>Live</div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Community</th><th>Population share</th><th>Tone (7d)</th><th>Net</th><th>Trend</th></tr></thead>
+      <tbody>
+        <tr><td>Maronite Christians</td><td class="sec">~21%</td><td><div class="sb" style="width:200px"><div class="pos" style="flex:54"></div><div class="ne" style="flex:31"></div><div class="neg" style="flex:15"></div></div></td><td style="font-family:var(--mono);color:var(--teal)">+5</td><td class="trend-up">↑</td></tr>
+        <tr><td>Sunni Muslims</td><td class="sec">~31%</td><td><div class="sb" style="width:200px"><div class="pos" style="flex:38"></div><div class="ne" style="flex:24"></div><div class="neg" style="flex:38"></div></div></td><td style="font-family:var(--mono);color:var(--critical)">−4</td><td class="trend-down">↓</td></tr>
+        <tr><td>Shia Muslims</td><td class="sec">~31%</td><td><div class="sb" style="width:200px"><div class="pos" style="flex:30"></div><div class="ne" style="flex:26"></div><div class="neg" style="flex:44"></div></div></td><td style="font-family:var(--mono);color:var(--critical)">−14</td><td class="trend-down">↓</td></tr>
+        <tr><td>Druze</td><td class="sec">~5%</td><td><div class="sb" style="width:200px"><div class="pos" style="flex:55"></div><div class="ne" style="flex:30"></div><div class="neg" style="flex:15"></div></div></td><td style="font-family:var(--mono);color:var(--teal)">+6</td><td class="trend-up">↑</td></tr>
+        <tr><td>Greek Orthodox</td><td class="sec">~8%</td><td><div class="sb" style="width:200px"><div class="pos" style="flex:48"></div><div class="ne" style="flex:36"></div><div class="neg" style="flex:16"></div></div></td><td style="font-family:var(--mono);color:var(--teal)">+4</td><td class="trend-up">↑</td></tr>
+        <tr><td>Greek Catholic (Melkite)</td><td class="sec">~5%</td><td><div class="sb" style="width:200px"><div class="pos" style="flex:46"></div><div class="ne" style="flex:38"></div><div class="neg" style="flex:16"></div></div></td><td style="font-family:var(--mono);color:var(--teal)">+3</td><td class="trend-flat">↔</td></tr>
+        <tr><td>Armenian Orthodox</td><td class="sec">~4%</td><td><div class="sb" style="width:200px"><div class="pos" style="flex:50"></div><div class="ne" style="flex:38"></div><div class="neg" style="flex:12"></div></div></td><td style="font-family:var(--mono);color:var(--teal)">+2</td><td class="trend-flat">↔</td></tr>
+        <tr><td>Alawite</td><td class="sec">~1%</td><td><div class="sb" style="width:200px"><div class="pos" style="flex:32"></div><div class="ne" style="flex:30"></div><div class="neg" style="flex:38"></div></div></td><td style="font-family:var(--mono);color:var(--critical)">−6</td><td class="trend-down">↓</td></tr>
+        <tr><td>Secular / Civil</td><td class="sec">~8% (urban)</td><td><div class="sb" style="width:200px"><div class="pos" style="flex:32"></div><div class="ne" style="flex:27"></div><div class="neg" style="flex:41"></div></div></td><td style="font-family:var(--mono);color:var(--critical)">−9</td><td class="trend-down">↓</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============== REGIONAL ============== -->
+<section class="tabpanel" id="tab-regional">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <h2 style="font-size:18px;font-weight:500;margin:0">Regional &amp; foreign — Lebanon's bilateral environment</h2>
+    <span class="info" data-tip="<strong>Regional module.</strong> Tracks Lebanese leverage points and bilateral tension scores (Goldstein-coded GDELT events) for Iran, Saudi Arabia, USA, France, Syria, Russia, Israel, Qatar."></span>
+  </div>
+
+  <div class="grid g-2" style="gap:12px">
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title">Iran / IRGC</div>
+        <span class="info" data-tip="<strong>Iran leverage.</strong> Primary vector: Hezbollah command relationship. IRGC-Quds Force liaison documented. Financial support estimated $700M – $1B annually (US Treasury 2018–2024 figures)."></span>
+        <span class="pill pill-critical" style="margin-left:auto">High pressure</span>
+      </div>
+      <dl style="margin:0">
+        <div class="def-row"><dt>Primary vector</dt><dd>Hezbollah (party · armed proxy)</dd></div>
+        <div class="def-row"><dt>Goldstein 30d</dt><dd style="font-family:var(--mono)">−4.2 (negative cooperation)</dd></div>
+        <div class="def-row"><dt>Key actors</dt><dd>Naim Qassem (SG, Hezbollah) · IRGC liaison</dd></div>
+        <div class="def-row"><dt>Confidence</dt><dd><span class="pill pill-tier1">Tier 1 · Named · 7 sources</span></dd></div>
+      </dl>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title">United States</div>
+        <span class="info" data-tip="<strong>US leverage.</strong> Primary vector: LAF training and equipment. Backed Aoun and Salam appointments. Sanctions enforcement on Hezbollah-linked entities (OFAC)."></span>
+        <span class="pill pill-stable" style="margin-left:auto">Aligned</span>
+      </div>
+      <dl style="margin:0">
+        <div class="def-row"><dt>Primary vector</dt><dd>LAF support (training, equipment), sanctions</dd></div>
+        <div class="def-row"><dt>Goldstein 30d</dt><dd style="font-family:var(--mono)">+2.1 (positive cooperation)</dd></div>
+        <div class="def-row"><dt>Key actors</dt><dd>State Dept (NEA bureau) · Embassy Beirut</dd></div>
+        <div class="def-row"><dt>Confidence</dt><dd><span class="pill pill-tier1">Tier 1 · Named · 9 sources</span></dd></div>
+      </dl>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title">France</div>
+        <span class="info" data-tip="<strong>France leverage.</strong> Historic Mandate-era ties. Hosted CEDRE conference 2018. Diplomatic mediator in 2024–25 ceasefire negotiations. Cultural and educational soft power."></span>
+        <span class="pill pill-stable" style="margin-left:auto">Aligned</span>
+      </div>
+      <dl style="margin:0">
+        <div class="def-row"><dt>Primary vector</dt><dd>Diplomatic mediation, Francophone alignment</dd></div>
+        <div class="def-row"><dt>Goldstein 30d</dt><dd style="font-family:var(--mono)">+1.8</dd></div>
+        <div class="def-row"><dt>Key actors</dt><dd>Quai d'Orsay · MEAE Lebanon desk</dd></div>
+      </dl>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title">Saudi Arabia</div>
+        <span class="info" data-tip="<strong>Saudi leverage.</strong> Financial — historical bank deposits at BdL. Travel ban on Lebanon partially lifted 2024. Future Movement (former Hariri party) historically aligned."></span>
+        <span class="pill pill-stable" style="margin-left:auto">Re-engaging</span>
+      </div>
+      <dl style="margin:0">
+        <div class="def-row"><dt>Primary vector</dt><dd>Financial (BdL deposits), Sunni clientelism (historical)</dd></div>
+        <div class="def-row"><dt>Goldstein 30d</dt><dd style="font-family:var(--mono)">+0.6</dd></div>
+        <div class="def-row"><dt>Key actors</dt><dd>MoFA · KSA Embassy Beirut</dd></div>
+      </dl>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title">Israel</div>
+        <span class="info" data-tip="<strong>Israel.</strong> No diplomatic relations. Active military front during 2023–2024. Nov 2025 ceasefire holding. Border demarcation negotiations via UNIFIL ongoing."></span>
+        <span class="pill pill-critical" style="margin-left:auto">Critical</span>
+      </div>
+      <dl style="margin:0">
+        <div class="def-row"><dt>Status</dt><dd>State of war · Nov 2025 ceasefire</dd></div>
+        <div class="def-row"><dt>Goldstein 30d</dt><dd style="font-family:var(--mono);color:var(--critical)">−7.4</dd></div>
+        <div class="def-row"><dt>Live indicators</dt><dd>UNIFIL reporting · LAF deployment south</dd></div>
+      </dl>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title">Syria</div>
+        <span class="info" data-tip="<strong>Syria.</strong> Post-Assad transition (Dec 2024). New government in Damascus. Border situation evolving. Historical leverage via security/intel infrastructure now degraded."></span>
+        <span class="pill pill-strained" style="margin-left:auto">Transition</span>
+      </div>
+      <dl style="margin:0">
+        <div class="def-row"><dt>Status</dt><dd>Post-Assad transitional government</dd></div>
+        <div class="def-row"><dt>Goldstein 30d</dt><dd style="font-family:var(--mono)">−1.3</dd></div>
+        <div class="def-row"><dt>Border crossings</dt><dd>4 official, multiple informal</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ============== REPORTS ============== -->
+<section class="tabpanel" id="tab-reports">
+  <div class="panel panel-raised" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:500">Generate Intelligence Report</div>
+      <span class="info" data-tip="<strong>Report generator.</strong> Subject + period + focus produces a structured intelligence brief. All reports begin with a Pending review badge; high-impact assessments are reviewed by a human analyst within 24 h."></span>
+      <span style="margin-left:auto;font-size:11.5px;color:var(--text-secondary)">7 of 10 remaining · Available now</span>
+    </div>
+
+    <div class="grid g-3" style="gap:10px;margin-bottom:14px">
+      <div>
+        <label style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Subject</label>
+        <select class="sel"><option>Council of Ministers</option><option>Joseph Aoun (Presidency)</option><option>Nawaf Salam (PM)</option><option>Hezbollah (party)</option><option>Lebanese Armed Forces</option><option>Banque du Liban</option><option>Iran / IRGC (foreign actor)</option><option>Comparison: Hezbollah vs LF</option></select>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Period</label>
+        <select class="sel"><option>Last 14 days</option><option>Last 7 days</option><option>Last 30 days</option><option>Custom range…</option></select>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Focus</label>
+        <select class="sel"><option>Decision-making analysis</option><option>Current state &amp; developments</option><option>Historical record</option><option>Network &amp; influence</option><option>Risk &amp; stability</option><option>Foreign influence</option><option>Misconduct record</option></select>
+      </div>
+    </div>
+    <button class="btn">Generate full report →</button>
+  </div>
+
+  <div class="panel" style="margin-bottom:14px">
+    <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;flex-wrap:wrap">
+      <div style="flex:1;min-width:280px">
+        <div style="font-size:16px;font-weight:500">Intelligence Report: Council of Ministers</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Period: 12 – 26 Apr 2026 · Focus: Decision-making analysis</div>
+        <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px;font-family:var(--mono)">Generated: 26 Apr 2026, 14:32 UTC</div>
+      </div>
+      <div style="text-align:right;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+        <span class="pill pill-pending">⏳ Pending review</span>
+        <span style="font-size:11px;color:var(--text-tertiary)">Confidence: High · 847 mentions · 31 sources · 4 languages</span>
+      </div>
+    </div>
+
+    <div style="border-top:1px solid var(--border-subtle);padding-top:14px">
+      <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Executive Summary</div>
+      <p style="font-size:13px;line-height:1.7;color:var(--text-primary);margin:0 0 14px">The Council of Ministers demonstrated constrained decision-making capacity during the analysis period, with three cabinet sessions producing two minor administrative decrees and no progress on the four pending IMF reform conditions requiring cabinet approval. Coalition arithmetic — particularly the Health and Labour portfolios held by Hezbollah-aligned ministers — continues to produce procedural blocks on banking-resolution drafts.</p>
+
+      <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Key findings</div>
+      <ol style="font-size:13px;line-height:1.7;color:var(--text-secondary);padding-left:18px;margin:0 0 14px">
+        <li><span style="color:var(--text-primary)">Hezbollah's portfolio ministers (Health: Nasredine, Labour: Haidar) effectively blocked two proposed reform decrees by absenting from quorum on 18 and 22 April.</span></li>
+        <li><span style="color:var(--text-primary)">PM Salam's reform agenda faces structural resistance from Speaker Berri's calendar control over Parliament.</span></li>
+        <li><span style="color:var(--text-primary)">Foreign pressure from USA and France visible in three coordinated démarches recorded between 14 and 24 April.</span></li>
+        <li><span style="color:var(--text-primary)">Independents holding 10 portfolios show low coordination — voted as one bloc on only 1 of 4 contested decrees.</span></li>
+      </ol>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-ghost btn">Read full report ↓</button>
+        <button class="btn-ghost btn">Download PDF</button>
+        <button class="btn-ghost btn">Share</button>
+      </div>
+
+      <div class="evidence">
+        <strong>Evidence:</strong>
+        <a href="#">Raw sources (847)</a><span class="arr">→</span>
+        <a href="#">Processed analysis</a><span class="arr">→</span>
+        <a href="#">This report</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Past reports</div>
+      <span class="info" data-tip="<strong>Report library.</strong> All reports you have generated. Verification status updates as reports clear human review. Reports are retained 12 months; full export available via your account representative."></span>
+      <input class="inp" placeholder="Search library…" style="margin-left:auto;max-width:240px;padding:6px 10px">
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Report</th><th>Period</th><th>Generated</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Council of Ministers — Decision-making</td><td class="sec">Last 14d</td><td class="sec">Today 14:32</td><td><span class="pill pill-pending">⏳ Pending</span></td></tr>
+        <tr><td>Nawaf Salam — Network analysis</td><td class="sec">Last 30d</td><td class="sec">23 Apr 11:15</td><td><span class="pill pill-verified">✓ Verified</span></td></tr>
+        <tr><td>Iran / IRGC — Foreign influence</td><td class="sec">Last 30d</td><td class="sec">21 Apr 09:20</td><td><span class="pill pill-verified">✓ Verified</span></td></tr>
+        <tr><td>Lebanese Armed Forces — Current state</td><td class="sec">Last 7d</td><td class="sec">18 Apr 16:40</td><td><span class="pill pill-verified">✓ Verified</span></td></tr>
+        <tr><td>Lebanon — Country overview</td><td class="sec">Last 14d</td><td class="sec">15 Apr 10:05</td><td><span class="pill pill-disputed">⚠ Disputed</span></td></tr>
+        <tr><td>Hezbollah — Network analysis</td><td class="sec">Last 30d</td><td class="sec">10 Apr 12:18</td><td><span class="pill pill-verified">✓ Verified</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============== SOURCES ============== -->
+<section class="tabpanel" id="tab-sources">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <h2 style="font-size:18px;font-weight:500;margin:0">Sources — 84 monitored across 4 languages</h2>
+    <span class="info" data-tip="<strong>Source registry.</strong> Each source carries a reliability score (0.0–1.0) and an affiliation label. Affiliated outlets are monitored, not excluded — what an actor's media network is saying is itself intelligence. Reliability weights aggregate metrics."></span>
+  </div>
+
+  <div class="panel" style="margin-bottom:12px">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <input class="inp" id="src-search" placeholder="Search sources…" style="flex:1;min-width:200px">
+      <div class="fpills" style="margin:0">
+        <button class="fpill active" data-f="all">All <span style="color:var(--text-tertiary);margin-left:4px;font-family:var(--mono)" id="src-count">84</span></button>
+        <button class="fpill" data-f="ind">Independent</button>
+        <button class="fpill" data-f="actor">Actor-affiliated</button>
+        <button class="fpill" data-f="state">State-affiliated</button>
+        <button class="fpill" data-f="foreign">Foreign state</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="padding:0;overflow:hidden">
+    <div style="overflow-x:auto">
+    <table class="tbl" id="src-table">
+      <thead><tr><th>Source</th><th>Type</th><th>Lang</th><th>Reliability</th><th>Affiliation</th></tr></thead>
+      <tbody id="src-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+  <div style="margin-top:14px;font-size:11.5px;color:var(--text-tertiary)">Reliability scores reflect track record against cross-source consensus. Reviewed quarterly. Not subscriber-configurable.</div>
+</section>
+
+</main>
+
+<!-- ACCOUNT MODAL -->
+<div class="modal-back" id="acct-modal">
+  <div class="modal" style="max-width:560px">
+    <span class="modal-x" onclick="closeAcct()">×</span>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+      <div class="initials lg">M.R.</div>
+      <div>
+        <div style="font-size:16px;font-weight:500">Mohammed Rashid</div>
+        <div style="font-size:12px;color:var(--text-secondary)">Political Analyst · Embassy of [Country] · Beirut</div>
+        <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px;font-family:var(--mono)">🔒 Subscription: Lebanon · Annual · Expires 31 Dec 2026</div>
+      </div>
+    </div>
+
+    <div style="border-top:1px solid var(--border-subtle);padding-top:14px;margin-top:6px">
+      <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Security</div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0"><span class="sec" style="color:var(--text-secondary)">Password</span><span>•••••••••• · <a href="#">Change →</a></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0"><span class="sec" style="color:var(--text-secondary)">MFA</span><span>FIDO2 Security Key · Active · <a href="#">Manage →</a></span></div>
+    </div>
+
+    <div style="border-top:1px solid var(--border-subtle);padding-top:14px;margin-top:14px">
+      <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Registered devices</div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0"><span>MacBook Pro · Chrome</span><span class="sec" style="color:var(--text-tertiary);font-family:var(--mono)">15 Jan 2026</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0"><span>iPhone 15</span><span class="sec" style="color:var(--text-tertiary);font-family:var(--mono)">22 Feb 2026</span></div>
+    </div>
+
+    <div style="border-top:1px solid var(--border-subtle);padding-top:14px;margin-top:14px">
+      <div style="font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Recent access</div>
+      <div style="font-size:11.5px;color:var(--text-secondary);font-family:var(--mono);line-height:1.8">
+        26 Apr 2026 14:30 · 212.43.x.x · Lebanon · MacBook · Login<br>
+        26 Apr 2026 14:31 · 212.43.x.x · Lebanon · MacBook · Report generated<br>
+        25 Apr 2026 09:15 · 212.43.x.x · Lebanon · MacBook · Login
+      </div>
+    </div>
+
+    <p style="font-size:11px;color:var(--text-tertiary);margin-top:14px;margin-bottom:0">Full access log retained for 12 months. Contact your account representative for export. No user management. No invitation options. One named individual per contract.</p>
+  </div>
+</div>
+
+<script>
+/* ===== Tabs ===== */
+function goTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===id));
+  document.querySelectorAll('.tabpanel').forEach(p=>p.classList.toggle('active', p.id==='tab-'+id));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click', ()=>goTab(t.dataset.tab));
+});
+
+/* ===== Subtab generic toggling within a tabpanel ===== */
+document.querySelectorAll('.subtabs').forEach(group=>{
+  group.querySelectorAll('.subtab').forEach(s=>{
+    s.addEventListener('click', ()=>{
+      group.querySelectorAll('.subtab').forEach(x=>x.classList.remove('active'));
+      s.classList.add('active');
+    });
+  });
+});
+
+/* ===== Institution list selection ===== */
+document.querySelectorAll('#tab-institutions .lrow').forEach(r=>{
+  r.addEventListener('click', ()=>{
+    document.querySelectorAll('#tab-institutions .lrow').forEach(x=>x.classList.remove('active'));
+    r.classList.add('active');
+  });
+});
+
+/* ===== Filter pills (visual only on people/inst) ===== */
+document.querySelectorAll('#tab-people .fpills, #tab-institutions .fpills').forEach(group=>{
+  group.querySelectorAll('.fpill').forEach(p=>{
+    p.addEventListener('click', ()=>{
+      group.querySelectorAll('.fpill').forEach(x=>x.classList.remove('active'));
+      p.classList.add('active');
+    });
+  });
+});
+
+/* ===== Info tooltips ===== */
+document.querySelectorAll('.info').forEach(el=>{
+  const tip = el.dataset.tip;
+  if(tip){
+    const span=document.createElement('span');
+    span.className='info-tip';
+    span.innerHTML=tip;
+    el.appendChild(span);
+  }
+  // Edge detect
+  const check=()=>{
+    const r=el.getBoundingClientRect();
+    if(r.right + 160 > innerWidth) el.classList.add('tip-left');
+  };
+  check();
+  addEventListener('resize', check);
+  el.tabIndex=0;
+  el.addEventListener('click',e=>{
+    e.stopPropagation();
+    document.querySelectorAll('.info[data-open="true"]').forEach(o=>{if(o!==el)o.removeAttribute('data-open');});
+    if(el.dataset.open==='true') el.removeAttribute('data-open'); else el.dataset.open='true';
+  });
+});
+document.addEventListener('click',()=>{
+  document.querySelectorAll('.info[data-open="true"]').forEach(o=>o.removeAttribute('data-open'));
+});
+
+/* ===== Date pill / historical mode ===== */
+const datePill=document.getElementById('date-pill');
+const datePop=document.getElementById('date-pop');
+datePill.addEventListener('click',e=>{e.stopPropagation();datePop.classList.toggle('on');});
+document.addEventListener('click',()=>datePop.classList.remove('on'));
+datePop.addEventListener('click',e=>e.stopPropagation());
+datePop.querySelectorAll('.preset').forEach(p=>{
+  p.addEventListener('click',()=>{
+    const d=p.dataset.d;
+    if(d==='live'){ setLive(); }
+    else { setHistorical(d, p.textContent.split(' — ')[0]); }
+    datePop.classList.remove('on');
+  });
+});
+function setHistorical(iso,label){
+  document.getElementById('date-label').textContent=label;
+  document.getElementById('hist-date').textContent=label;
+  document.getElementById('hist-bar').classList.add('on');
+  document.getElementById('tabnav').classList.add('with-bar');
+  datePill.style.color='var(--warning)';
+}
+function setLive(){
+  document.getElementById('date-label').textContent='26 Apr 2026';
+  document.getElementById('hist-bar').classList.remove('on');
+  document.getElementById('tabnav').classList.remove('with-bar');
+  datePill.style.color='';
+}
+
+/* ===== Account modal ===== */
+document.getElementById('user-btn').addEventListener('click',()=>document.getElementById('acct-modal').classList.add('on'));
+function closeAcct(){document.getElementById('acct-modal').classList.remove('on');}
+document.getElementById('acct-modal').addEventListener('click',e=>{if(e.target.id==='acct-modal')closeAcct();});
+
+/* ===== SOURCES DATA ===== */
+const SOURCES = [
+  // Lebanese news
+  ['L\'Orient Today','News outlet','EN',0.85,'ind','Independent'],
+  ['L\'Orient-Le Jour','News outlet','FR',0.88,'ind','Independent (Lebanese)'],
+  ['An-Nahar · النهار','News outlet','AR',0.80,'ind','Independent / centrist'],
+  ['Al-Joumhouria · الجمهورية','News outlet','AR',0.72,'ind','Generally pro-Lebanese Forces'],
+  ['MTV Lebanon','News outlet','AR',0.78,'ind','Independent'],
+  ['LBCI','News outlet','AR',0.80,'ind','Independent'],
+  ['Al-Jadeed · الجديد','News outlet','AR',0.78,'ind','Independent'],
+  ['Al-Manar · المنار','News outlet','AR',0.60,'actor','Hezbollah-affiliated'],
+  ['NBN','News outlet','AR',0.62,'actor','Amal-affiliated'],
+  ['OTV','News outlet','AR',0.62,'actor','FPM-affiliated'],
+  ['Future TV','News outlet','AR',0.65,'actor','Future Movement-affiliated'],
+  ['Al-Anbaa · الأنباء','News outlet','AR',0.62,'actor','PSP-affiliated'],
+  ['Raseef22 · رصيف ٢٢','News outlet','AR',0.82,'ind','Independent'],
+  ['Daraj Media','Investigative','AR',0.82,'ind','Independent investigative'],
+  ['Megaphone','News outlet','AR',0.80,'ind','Independent / reform'],
+  ['NNA · وكالة الأنباء الوطنية','Wire service','AR',0.70,'state','Lebanese state wire'],
+  ['Al-Akhbar · الأخبار','News outlet','AR',0.62,'ind','Hezbollah-aligned editorial'],
+  ['Al-Liwaa · اللواء','News outlet','AR',0.70,'ind','Sunni-leaning'],
+  ['Nidaa Al-Watan · نداء الوطن','News outlet','AR',0.72,'ind','Lebanese'],
+  ['Lebanon24','News portal','AR',0.65,'ind','Lebanese aggregator'],
+  ['Naharnet','News outlet','EN',0.70,'ind','Lebanese'],
+  ['The Public Source','Investigative','EN',0.82,'ind','Lebanese investigative'],
+  ['Beirut Today','News outlet','EN',0.75,'ind','Lebanese independent'],
+  // Regional / international
+  ['Reuters Arabic','Wire service','AR',0.92,'ind','Independent'],
+  ['AFP Arabic','Wire service','AR',0.92,'ind','Independent'],
+  ['BBC Arabic','News outlet','AR',0.90,'ind','Public broadcaster (UK)'],
+  ['Al Jazeera Arabic · الجزيرة','News outlet','AR',0.82,'state','Qatari state-funded'],
+  ['France 24 Arabic','News outlet','AR',0.85,'ind','Public broadcaster (France)'],
+  ['Asharq Al-Awsat · الشرق الأوسط','News outlet','AR',0.78,'ind','Saudi-owned, pan-Arab'],
+  ['Al-Arabiya · العربية','News outlet','AR',0.75,'state','Saudi state-funded'],
+  ['Al-Mayadeen · الميادين','News outlet','AR',0.55,'state','Pan-Arab, Iran-aligned'],
+  ['The New Arab','News outlet','AR',0.70,'ind','Pan-Arab'],
+  ['Al-Monitor','News outlet','EN',0.78,'ind','MENA-focused'],
+  ['Middle East Eye','News outlet','EN',0.72,'ind','Independent'],
+  ['The National (UAE)','News outlet','EN',0.72,'ind','UAE-based'],
+  ['Independent Arabia','News outlet','AR',0.78,'ind','Saudi-owned, pan-Arab'],
+  // English / Western
+  ['The Guardian (Lebanon coverage)','News outlet','EN',0.88,'ind','Independent'],
+  ['Le Monde (Lebanon coverage)','News outlet','FR',0.90,'ind','Independent'],
+  ['Le Figaro (Lebanon coverage)','News outlet','FR',0.85,'ind','Independent'],
+  ['Liberation','News outlet','FR',0.84,'ind','Independent'],
+  ['Mediapart','Investigative','FR',0.86,'ind','Independent investigative'],
+  // Hebrew / Israeli
+  ['Haaretz (English)','News outlet','EN',0.85,'ind','Independent (Israeli)'],
+  ['Haaretz (Hebrew)','News outlet','HE',0.85,'ind','Independent (Israeli)'],
+  ['Times of Israel','News outlet','EN',0.80,'ind','Independent (Israeli)'],
+  ['Ynet / Yedioth Ahronoth','News outlet','HE',0.78,'ind','Independent (Israeli)'],
+  ['Kan News','Public broadcaster','HE',0.85,'state','Israeli public broadcaster'],
+  ['Walla News','News outlet','HE',0.72,'ind','Independent (Israeli)'],
+  ['Channel 12 News','News outlet','HE',0.78,'ind','Independent (Israeli)'],
+  ['Channel 13 News','News outlet','HE',0.78,'ind','Independent (Israeli)'],
+  // Foreign state
+  ['RT Arabic','News outlet','AR',0.45,'foreign','Russian state-affiliated'],
+  ['Sputnik Arabic','News outlet','AR',0.45,'foreign','Russian state-affiliated'],
+  ['IRNA Arabic','Wire service','AR',0.50,'foreign','Iranian state-affiliated'],
+  ['Tasnim Arabic','News outlet','AR',0.45,'foreign','Iranian (IRGC-linked)'],
+  ['Press TV Arabic','News outlet','AR',0.45,'foreign','Iranian state-affiliated'],
+  ['SANA · سانا','Wire service','AR',0.50,'foreign','Syrian state-affiliated'],
+  ['Enab Baladi','News outlet','AR',0.78,'ind','Independent Syrian opposition'],
+  // Telegram
+  ['Hezbollah official Telegram','Telegram','AR',0.55,'actor','Hezbollah-affiliated'],
+  ['Amal Movement Telegram','Telegram','AR',0.55,'actor','Amal-affiliated'],
+  ['Lebanese Forces Telegram','Telegram','AR',0.58,'actor','LF-affiliated'],
+  ['FPM Telegram','Telegram','AR',0.55,'actor','FPM-affiliated'],
+  ['Kataeb Telegram','Telegram','AR',0.58,'actor','Kataeb-affiliated'],
+  ['PSP Telegram','Telegram','AR',0.58,'actor','PSP-affiliated'],
+  ['Civil society Telegram (12 channels)','Telegram','AR',0.60,'ind','Various / community'],
+  // Lebanese institutional
+  ['Parliament.lb · مجلس النواب','Official record','AR',0.95,'state','Lebanese Parliament'],
+  ['Lebanese Official Gazette · الجريدة الرسمية','Official record','AR',0.98,'state','Government of Lebanon'],
+  ['Ministry of Finance Lebanon','Official record','AR',0.92,'state','Government of Lebanon'],
+  ['Banque du Liban (BdL)','Official record','AR',0.92,'state','Lebanese central bank'],
+  ['Audit Bureau · ديوان المحاسبة','Official audit','AR',0.92,'state','Lebanese audit'],
+  ['Court of Cassation','Official legal','AR',0.95,'state','Lebanese judiciary'],
+  ['Civil Service Council','Official record','AR',0.90,'state','Government of Lebanon'],
+  ['Lebanese Commercial Registry','Official record','AR',0.92,'state','Government of Lebanon'],
+  // Think tanks / NGO
+  ['Carnegie Middle East Center','Research','EN',0.90,'ind','Independent'],
+  ['International Crisis Group','Research','EN',0.90,'ind','Independent'],
+  ['Chatham House','Research','EN',0.90,'ind','Independent'],
+  ['IISS','Research','EN',0.90,'ind','Independent'],
+  ['WINEP','Research','EN',0.85,'ind','Independent (US, MENA)'],
+  ['Wilson Center','Research','EN',0.88,'ind','Independent'],
+  ['LCPS','Research','EN',0.88,'ind','Independent (Lebanese)'],
+  ['Issam Fares Institute (AUB)','Research','EN',0.88,'ind','Independent (Lebanese)'],
+  ['Transparency International (Lebanon)','NGO','EN',0.88,'ind','NGO'],
+  ['Human Rights Watch (Lebanon)','NGO','EN',0.88,'ind','NGO'],
+  ['Amnesty International (Lebanon)','NGO','EN',0.88,'ind','NGO'],
+  ['Synaps Network','Research','EN',0.78,'ind','Independent (MENA)'],
+  ['Atlantic Council','Research','EN',0.85,'ind','Independent'],
+  ['RAND Corporation','Research','EN',0.90,'ind','Independent'],
+  ['SIPRI','Research','EN',0.92,'ind','Independent (Sweden)'],
+  // Sanctions / multilateral
+  ['OFAC SDN list','Sanctions DB','EN',1.00,'state','US Treasury (official)'],
+  ['EU consolidated sanctions list','Sanctions DB','EN',1.00,'state','European Union'],
+  ['UN Security Council sanctions','Sanctions DB','EN',1.00,'state','United Nations'],
+  ['UK OFSI sanctions list','Sanctions DB','EN',1.00,'state','UK HM Treasury'],
+  // Economic
+  ['GDELT (events & GKG)','Event data','EN',0.78,'ind','Independent academic'],
+  ['World Bank Open Data','Statistical','EN',0.95,'state','Multilateral'],
+  ['IMF WEO & Article IV','Statistical','EN',0.95,'state','Multilateral'],
+  ['Sayrafa rate (BdL)','Market data','AR',0.90,'state','Banque du Liban'],
+  ['Parallel-market rate aggregations','Market data','AR',0.70,'ind','Aggregated'],
+  // Diplomatic
+  ['US State Dept briefings','Official','EN',0.92,'state','US government'],
+  ['French MEAE','Official','FR',0.92,'state','French government'],
+  ['UK FCDO','Official','EN',0.92,'state','UK government'],
+  ['UNIFIL public reports','Multilateral','EN',0.90,'state','United Nations'],
+  ['UN OCHA situation reports','Multilateral','EN',0.90,'state','United Nations'],
+  ['FATF mutual evaluation','Multilateral','EN',0.95,'state','Multilateral'],
+  // Investigative
+  ['OCCRP','Investigative','EN',0.90,'ind','Independent consortium'],
+  ['ICIJ','Investigative','EN',0.92,'ind','Independent consortium'],
+  ['Bellingcat (Lebanon)','Investigative','EN',0.85,'ind','Open-source investigations'],
+  ['FDD','Research','EN',0.78,'ind','Independent (US)'],
+  ['Conflict Armament Research','Research','EN',0.88,'ind','Arms tracing'],
+  ['Triangle','Research','EN',0.78,'ind','Independent (Lebanese)'],
+];
+
+function affPill(t,label){
+  const cls = t==='actor'?'pill-aff-actor':t==='foreign'?'pill-aff-foreign':t==='state'?'pill-aff-state':'pill-aff-ind';
+  return '<span class="pill '+cls+'">'+label+'</span>';
+}
+function scoreBar(s){
+  const w=Math.round(s*100);
+  const cls = s>=0.80?'':(s>=0.60?'med':'low');
+  return '<span class="score-cell">'+s.toFixed(2)+'<span class="scorebar"><i class="'+cls+'" style="width:'+w+'%"></i></span></span>';
+}
+function renderSources(filter,query){
+  const tb=document.getElementById('src-tbody');
+  let html='';
+  let count=0;
+  SOURCES.forEach(s=>{
+    const [name,type,lang,score,aff,label]=s;
+    if(filter && filter!=='all' && aff!==filter) return;
+    if(query && !(name+type+label).toLowerCase().includes(query)) return;
+    count++;
+    html += '<tr><td>'+name+'</td><td class="sec">'+type+'</td><td><span class="lang-pill">'+lang+'</span></td><td>'+scoreBar(score)+'</td><td>'+affPill(aff,label)+'</td></tr>';
+  });
+  tb.innerHTML=html;
+  document.getElementById('src-count').textContent=count;
+}
+renderSources('all','');
+let curFilter='all', curQ='';
+document.querySelectorAll('#tab-sources .fpill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('#tab-sources .fpill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    curFilter=p.dataset.f;
+    renderSources(curFilter,curQ);
+  });
+});
+document.getElementById('src-search').addEventListener('input',e=>{
+  curQ=e.target.value.trim().toLowerCase();
+  renderSources(curFilter,curQ);
+});
+</script>
+</body>
+</html>
